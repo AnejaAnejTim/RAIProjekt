@@ -2,6 +2,5 @@ backend/node_modules
 backend/.env
 frontend/.idea
 frontend/node_modules
-.DS_store
-frontend/.DS_Store
-backend/.DS_Store
+.DS_Store
+**/.DS_Store
