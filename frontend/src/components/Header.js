@@ -6,33 +6,41 @@ const Header = ({ title }) => {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="bg-light text-black shadow-sm">
+    <header style={{backgroundColor: "#b0d16b", color: "white" }} className="shadow-sm">
         <div className="container d-flex justify-content-between align-items-center py-3">
-            <h1 className="h4 m-0">YummyAI</h1>
+          <div className="d-flex align-items-center">
+          <img
+            src="/logo.png"
+            alt="logo"
+            style={{ width: "50px", height: "50px", objectFit: "contain" }}
+            className="me-1"
+          />
+          <h1 className="h4 m-0">YummyAI</h1>
+        </div>
             <nav>
               <ul className="nav">
                 <li className="nav-item">
-                  <Link to="/" className="nav-link ">Home</Link>
+                  <Link to="/" className="nav-link text-white text-decoration-none">Home</Link>
                 </li>
                 {user ? (
                   <>
                     <li className="nav-item">
-                      <Link to="/publish" className="nav-link ">Publish</Link>
+                      <Link to="/publish" className="nav-link text-white text-decoration-none">Publish</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/profile" className="nav-link">Profile</Link>
+                      <Link to="/profile" className="nav-link text-white text-decoration-none">Profile</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/logout" className="nav-link">Logout</Link>
+                      <Link to="/logout" className="nav-link text-white text-decoration-none">Logout</Link>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className="nav-item">
-                      <Link to="/login" className="nav-link">Login</Link>
+                      <Link to="/login" className="nav-link text-white text-decoration-none">Login</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/register" className="nav-link">Register</Link>
+                      <Link to="/register" className="nav-link text-white text-decoration-none">Register</Link>
                     </li>
                   </>
                 )}
