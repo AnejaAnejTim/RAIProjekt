@@ -30,50 +30,81 @@ function Login(){
     }
 
     return (
-            
-                <form onSubmit={Login} className="p-4 border rounded shadow-sm">
-                  {/* Redirect to home if user is already logged in */}
-                  {userContext.user && <Navigate replace to="/" />}
+                    <div className="row d-flex justify-content-center align-items-center h-100 ">
+                        <div className="col col-xl-10">
+                            <div className="card shadow" style={{ borderRadius: "1rem" }}>
+                                <div className="row g-0">
+                                    <div className="col-md-6 col-lg-5 d-none d-md-block">
+                                        <img
+                                            src="https://img.freepik.com/premium-photo/background-food-fruits-vegetables-collection-fruit-vegetable-portrait-format-healthy-eating-diet-apples-oranges-tomatoes_770123-2035.jpg"
+                                            alt="login form"
+                                            className="img-fluid"
+                                            style={{ borderRadius: "1rem 0 0 1rem" }}
+                                        />
+                                    </div>
+                                    <div className="col-md-6 col-lg-7 d-flex align-items-center">
+                                        <div className="card-body p-4 p-lg-5 text-black">
+                                            <div className="d-flex align-items-center mb-3 pb-1">
+                                                <img
+                                                  src="/logo.png"
+                                                  alt="logo"
+                                                  style={{ width: "70px", height: "70px", objectFit: "contain" }}
+                                                  className="me"
+                                                />
+                                                <span className="h1 fw- mb-0">YummyAi</span>
+                                              </div>
 
-                  <div className="mb-3">
-                    <label htmlFor="username" className="form-label">Username</label>
-                    <input
-                      type="text"
-                      name="username"
-                      id="username"
-                      placeholder="Username"
-                      className="form-control"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
-                    />
-                  </div>
+                                            <h5 className="fw-normal mb-3 pb-3">Prijavi se v svoj profil</h5>
 
-                  <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      id="password"
-                      placeholder="Password"
-                      className="form-control"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
+                                            <form onSubmit={Login}>
+                                                {userContext.user && <Navigate replace to="/" />}
+                                                <div className="form-outline mb-4">
+                                                    <input
+                                                        type="text"
+                                                        id="username"
+                                                        className="form-control form-control-lg"
+                                                        placeholder="Uporabniško ime"
+                                                        value={username}
+                                                        onChange={(e) => setUsername(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
 
-                  {error && <div className="text-danger mb-3">{error}</div>}
+                                                <div className="form-outline mb-4">
+                                                    <input
+                                                        type="password"
+                                                        id="password"
+                                                        className="form-control form-control-lg"
+                                                        placeholder="Geslo"
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
 
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-100"
-                    disabled={!username || !password}
-                  >
-                    Log in
-                  </button>
-                </form>
-    );
+                                                {error && <div className="text-danger mb-3">{error}</div>}
+
+                                                <div className="pt-1 mb-4">
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-lg btn-block shadow"
+                                                        disabled={!username || !password}
+                                                        style={{backgroundColor: "#b0d16b", color: "#FFFFFF"}}
+                                                    >
+                                                        Prijava
+                                                    </button>
+                                                </div>
+                                                <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
+                                                    Še nimate računa? <a href="#!" style={{ color: "#393f81" }}>Registrirajte se tukaj</a>
+                                                </p>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        );
 }
 
 export default Login;
