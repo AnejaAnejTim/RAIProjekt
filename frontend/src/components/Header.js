@@ -20,27 +20,27 @@ const Header = ({ title }) => {
             <nav>
               <ul className="nav">
                 <li className="nav-item">
-                  <Link to="/" className="nav-link text-white text-decoration-none">Home</Link>
+                  <Link to="/" className="nav-link text-white text-decoration-none">Domov</Link>
                 </li>
                 {user ? (
                   <>
                     <li className="nav-item">
-                      <Link to="/publish" className="nav-link text-white text-decoration-none">Publish</Link>
+                      <Link to="/publish" className="nav-link text-white text-decoration-none">Generiraj</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/profile" className="nav-link text-white text-decoration-none">Profile</Link>
+                      <Link to="/profile" className="nav-link text-white text-decoration-none">Moj profil</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/logout" className="nav-link text-white text-decoration-none">Logout</Link>
+                      <Link to="/logout" className="nav-link text-white text-decoration-none">Odjava</Link>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className="nav-item">
-                      <Link to="/login" className="nav-link text-white text-decoration-none">Login</Link>
+                      <Link to="/login" className="nav-link text-white text-decoration-none">Prijava</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/register" className="nav-link text-white text-decoration-none">Register</Link>
+                      <Link to="/register" className="nav-link text-white text-decoration-none">Registracija</Link>
                     </li>
                   </>
                 )}
