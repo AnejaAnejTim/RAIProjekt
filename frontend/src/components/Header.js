@@ -25,7 +25,7 @@ const Header = ({ title }) => {
                 {user ? (
                   <>
                     <li className="nav-item">
-                      <Link to="/publish" className="nav-link text-white text-decoration-none">Publish</Link>
+                      <Link to="/generate" className="nav-link text-white text-decoration-none">Generiraj</Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/profile" className="nav-link text-white text-decoration-none">Profile</Link>
