@@ -7,10 +7,8 @@ import Index from "./components/Index"
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Logout from "./components/Logout";
-<<<<<<< Updated upstream
-=======
 import Generate from "./components/GenerateShow";
->>>>>>> Stashed changes
+
 
 
 
@@ -59,10 +57,7 @@ function App() {
                 <Route path="/register" element={<Register />} />                
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/logout" element={<Logout />} />
-<<<<<<< Updated upstream
-=======
                 <Route path="/generate" element={<Generate />} />
->>>>>>> Stashed changes
               </Routes>
             </main>
 
