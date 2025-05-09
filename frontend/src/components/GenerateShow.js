@@ -81,6 +81,11 @@ function GenerateShow() {
                 <div className="col col-xl-10">
                     <div className="row g-0">
                         <div className="col-12">
+                          <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '2rem', color: '#333' }}>
+                            Generiraj recept
+                            <div style={{ fontSize: '1.6rem' }}>
+                                1. Izberite sestavine iz vašega hladilnika
+                            </div>
                             <IngredientsGenerate
                                 foodItems={foodItems}
                                 searchTerm={searchTerm}
@@ -88,6 +93,7 @@ function GenerateShow() {
                                 selectedItems={selectedItems}
                                 handleItemSelection={handleItemSelection}
                             />
+                           </div>
                             <hr style={{ margin: '40px auto', width: '80%', borderTop: '1px solid #ccc' }} />
                                 <GenerateFilters/>
                             <hr style={{ margin: '40px auto', width: '80%', borderTop: '1px solid #ccc' }} />
