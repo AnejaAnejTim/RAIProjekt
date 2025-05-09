@@ -11,7 +11,7 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
     const [itemToRemove, setItemToRemove] = useState(null);
     const [canUseMultiSelect, setCanUseMultiSelect] = useState(false);
     const [confirmDeleteSelectedVisible, setConfirmDeleteSelectedVisible] = useState(false);
-
+    const canDeleteSelected = canUseMultiSelect && selectedItems.length > 0;
     const itemsPerPage = 12;
     const filteredItems = foodItems.filter(item =>
         item.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -84,7 +84,7 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                                     backgroundColor: '#fff',
                                     position: 'absolute',
                                     top: '50%',
-                                    left: canUseMultiSelect ? 'calc(100% - 20px)' : '0',
+                                    left: canUseMultiSelect ? 'calc(100% - 23px)' : '3px',
                                     transform: 'translateY(-50%)',
                                     transition: 'left 0.3s ease'
                                 }}
@@ -92,23 +92,23 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                         </div>
                     </label>
 
-                    {canUseMultiSelect && (
-                        <img
-                            src={trashIcon}
-                            alt="Delete selected"
-                            title="Izbriši izbrane"
-                            onClick={() => {
-                                if (selectedItems.length > 0) {
-                                    setConfirmDeleteSelectedVisible(true);
-                                }
-                            }}
-                            style={{
-                                width: '25px',
-                                height: '25px',
-                                cursor: 'pointer',
-                            }}
-                        />
-                    )}
+                    <img
+                    src={trashIcon}
+                    alt="Delete selected"
+                    title="Izbriši izbrane"
+                    onClick={() => {
+                        if (canDeleteSelected) {
+                            setConfirmDeleteSelectedVisible(true);
+                        }
+                    }}
+                    style={{
+                        width: '25px',
+                        height: '25px',
+                        cursor: canDeleteSelected ? 'pointer' : 'not-allowed',
+                        opacity: canDeleteSelected ? 1 : 0.4,
+                    }}
+                    />
+
                 </div>
             </div>
 

@@ -42,7 +42,7 @@ function GenerateFilters() {
                                     backgroundColor: '#fff',
                                     position: 'absolute',
                                     top: '50%',
-                                    left: canUseOtherIngredients ? 'calc(100% - 20px)' : '0',
+                                    left: canUseOtherIngredients ? 'calc(100% - 23px)' : '3px',
                                     transform: 'translateY(-50%)',
                                     transition: 'left 0.3s ease'
                                 }}

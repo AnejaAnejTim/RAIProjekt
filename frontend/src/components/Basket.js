@@ -1,6 +1,8 @@
 import basketIcon from '../assets/basket.png';
-
+import removeIcon from '../assets/x.svg';
+import { useState } from 'react';
 function Basket({ selectedItems, handleItemRemove, showMenu, setShowMenu }) {
+    const [removingItems, setRemovingItems] = useState([]);
     return (
         <div
             style={{
@@ -40,14 +42,49 @@ function Basket({ selectedItems, handleItemRemove, showMenu, setShowMenu }) {
                         {selectedItems.length > 0 ? (
                             selectedItems.map((item, idx) => (
                                 <div key={idx} className="mb-2" style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={true}
-                                        onChange={() => handleItemRemove(item)}
-                                        style={{ marginRight: '10px' }}
-                                    />
-                                    <span>{item}</span>
+                                    <div
+                                        onClick={() => {
+                                            if (!removingItems.includes(item)) {
+                                                setRemovingItems((prev) => [...prev, item]);
+                                                setTimeout(() => {
+                                                    handleItemRemove(item);
+                                                    setRemovingItems((prev) => prev.filter((i) => i !== item));
+                                                }, 800);
+                                            }
+                                        }}
+                                        style={{
+                                            marginRight: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            height: '100%',
+                                        }}
+                                    >
+                                        <img
+                                            src={removeIcon}
+                                            alt="remove"
+                                            style={{
+                                                width: '16px',
+                                                height: '16px',
+                                                cursor: 'pointer',
+                                                display: 'block',
+                                            }}
+                                        />
+                                    </div>
+                                    <span
+                                        style={{
+                                            fontSize: '0.95rem',
+                                            textDecoration: removingItems.includes(item) ? 'line-through' : 'none',
+                                            opacity: removingItems.includes(item) ? 0 : 1,
+                                            transition: 'opacity 0.8s ease, text-decoration 0.8s ease',
+                                        }}
+                                    >
+                                        {item}
+                                    </span>
+
                                 </div>
+
+
                             ))
                         ) : (
                             <div className="mb-2">Ni izbranih sestavin.</div>
