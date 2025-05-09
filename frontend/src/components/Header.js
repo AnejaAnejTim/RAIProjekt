@@ -20,27 +20,30 @@ const Header = ({ title }) => {
             <nav>
               <ul className="nav">
                 <li className="nav-item">
-                  <Link to="/" className="nav-link text-white text-decoration-none">Domov</Link>
+                  <Link to="/" className="nav-link text-white text-decoration-none">Home</Link>
                 </li>
                 {user ? (
                   <>
                     <li className="nav-item">
-                      <Link to="/publish" className="nav-link text-white text-decoration-none">Generiraj</Link>
+                      <Link to="/myfridge" className="nav-link text-white text-decoration-none">Moj hladilnik</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/profile" className="nav-link text-white text-decoration-none">Moj profil</Link>
+                      <Link to="/generate" className="nav-link text-white text-decoration-none">Generiraj</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/logout" className="nav-link text-white text-decoration-none">Odjava</Link>
+                      <Link to="/profile" className="nav-link text-white text-decoration-none">Profile</Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link to="/logout" className="nav-link text-white text-decoration-none">Logout</Link>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className="nav-item">
-                      <Link to="/login" className="nav-link text-white text-decoration-none">Prijava</Link>
+                      <Link to="/login" className="nav-link text-white text-decoration-none">Login</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/register" className="nav-link text-white text-decoration-none">Registracija</Link>
+                      <Link to="/register" className="nav-link text-white text-decoration-none">Register</Link>
                     </li>
                   </>
                 )}
