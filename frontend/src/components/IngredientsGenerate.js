@@ -43,6 +43,30 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                         marginBottom: '20px'
                     }}
                 />
+            <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '2rem', color: '#333' }}>
+                Generiraj recept
+                <div style={{ fontSize: '1.6rem' }}>
+                    1. Izberite sestavine iz vašega hladilnika
+                </div>
+                <div style={{ marginTop: '10px' }}>
+                    <input
+                        type="text"
+                        placeholder="Iščite sestavino..."
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                        style={{
+                            padding: '8px 12px',
+                            borderRadius: '20px',
+                            border: '1px solid #ccc',
+                            width: '60%',
+                            marginTop: '10px',
+                            fontSize: '1rem'
+                        }}
+                    />
+                </div>
             </div>
 
             <div
@@ -105,6 +129,46 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                         </div>
                     );
                 })}
+                {currentItems.map((item, idx) => (
+                    <div
+                        key={idx}
+                        style={{
+                            backgroundColor: selectedItems.includes(item.label) ? '#b0d16b' : 'rgba(255, 255, 255, 0.5)',
+                            padding: '5px',
+                            borderRadius: '5px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                            width: '90%',
+                            height: '100%',
+                            marginBottom: '10px',
+                            marginTop: '10px',
+                        }}
+                        onClick={() => handleItemSelection(item.label)}
+                    >
+                        <FontAwesomeIcon
+                            icon={item.icon}
+                            style={{
+                                fontSize: '50px',
+                                marginBottom: '2px',
+                            }}
+                        />
+                        <span style={{ fontSize: '0.9rem' }}>{item.label}</span>
+                        <input
+                            type="checkbox"
+                            checked={selectedItems.includes(item.label)}
+                            readOnly
+                            style={{
+                                position: 'absolute',
+                                opacity: 0,
+                                pointerEvents: 'none',
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
 
             {totalPages > 1 && (
@@ -125,6 +189,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                         <img src={previousPageIcon} alt="Previous" style={{ width: '40px', height: '40px' }} />
                     </button>
                     <span style={{ margin: '0 10px', fontSize: '1rem' }}>Stran {currentPage} od {totalPages}</span>
+                    <span style={{ margin: '0 10px', fontSize: '1rem', verticalAlign: 'middle' }}>Stran {currentPage} od {totalPages}</span>
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}

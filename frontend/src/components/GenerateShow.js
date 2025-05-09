@@ -93,7 +93,7 @@ function GenerateShow() {
                                 selectedItems={selectedItems}
                                 handleItemSelection={handleItemSelection}
                             />
-                            </div>
+                           </div>
                             <hr style={{ margin: '40px auto', width: '80%', borderTop: '1px solid #ccc' }} />
                                 <GenerateFilters/>
                             <hr style={{ margin: '40px auto', width: '80%', borderTop: '1px solid #ccc' }} />
