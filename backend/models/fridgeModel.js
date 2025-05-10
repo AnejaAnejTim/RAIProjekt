@@ -2,8 +2,9 @@ var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
 var fridgeSchema = new Schema({
-	'item_name' : String,
+	'name' : String,
 	'quantity' : Number,
+	'unit': String,
 	'expiration' : Date,
 	'barcode' : {
 	 	type: Schema.Types.ObjectId,

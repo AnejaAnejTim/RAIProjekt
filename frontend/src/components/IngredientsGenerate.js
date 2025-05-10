@@ -9,7 +9,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
     const itemsPerPage = 12;
 
     const filteredItems = foodItems.filter(item =>
-        item.label.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -57,15 +57,15 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
         }}
     >
         {currentItems.map((item, idx) => {
-            const isSelected = selectedItems.includes(item.label);
-            const isHovered = hoveredItem === item.label;
+            const isSelected = selectedItems.includes(item.name);
+            const isHovered = hoveredItem === item.name;
 
             return (
                 <div
                     key={idx}
-                    onMouseEnter={() => setHoveredItem(item.label)}
+                    onMouseEnter={() => setHoveredItem(item.name)}
                     onMouseLeave={() => setHoveredItem(null)}
-                    onClick={() => handleItemSelection(item.label)}
+                    onClick={() => handleItemSelection(item.name)}
                     style={{
                         backgroundColor: isSelected ? '#b0d16b' : 'rgba(255, 255, 255, 0.5)',
                         padding: '5px',
@@ -91,7 +91,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                             marginBottom: '2px',
                         }}
                     />
-                    <span style={{ fontSize: '0.9rem' }}>{item.label}</span>
+                    <span style={{ fontSize: '0.9rem' }}>{item.name}</span>
                     <input
                         type="checkbox"
                         checked={isSelected}

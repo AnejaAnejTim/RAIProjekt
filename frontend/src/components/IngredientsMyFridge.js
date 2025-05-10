@@ -4,6 +4,8 @@ import nextPageIcon from '../assets/nextPage.svg';
 import previousPageIcon from '../assets/previousPage.svg';
 import removeIcon from '../assets/x.svg';
 import trashIcon from '../assets/trash.svg';
+import { Link } from 'react-router-dom';
+import plusGreenIcon from '../assets/plusGreen.svg'
 
 function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, searchTerm, setSearchTerm }) {
     const [currentPage, setCurrentPage] = useState(1);
@@ -14,7 +16,7 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
     const canDeleteSelected = canUseMultiSelect && selectedItems.length > 0;
     const itemsPerPage = 12;
     const filteredItems = foodItems.filter(item =>
-        item.label.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -46,6 +48,15 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                 marginInline: 'auto',
                 marginBottom: '20px'
             }}>
+                <Link to="/addarticles"><img src={plusGreenIcon}
+                                    alt="Add"
+                                    style={{
+                                        width: '25px',
+                                        height: '25px',
+                                        cursor: 'pointer',
+                                        display: 'block',
+
+                                    }}/></Link>
                 <input
                     type="text"
                     placeholder="Iščite sestavino..."
@@ -123,17 +134,17 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                 alignItems: 'center',
             }}>
                 {currentItems.map((item, idx) => {
-                    const isSelected = selectedItems.includes(item.label);
-                    const isHovered = hoveredItem === item.label;
+                    const isSelected = selectedItems.includes(item.name);
+                    const isHovered = hoveredItem === item.name;
 
                     return (
                         <div
                             key={idx}
-                            onMouseEnter={() => setHoveredItem(item.label)}
+                            onMouseEnter={() => setHoveredItem(item.name)}
                             onMouseLeave={() => setHoveredItem(null)}
                             onClick={() => {
                                 if (canUseMultiSelect) {
-                                    handleItemSelection(item.label);
+                                    handleItemSelection(item.name);
                                 }
                             }}
                             style={{
@@ -170,12 +181,12 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                                     }}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setItemToRemove(item.label);
+                                        setItemToRemove(item.name);
                                     }}
                                 />
                             )}
                             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '2px', pointerEvents: 'none' }} />
-                            <span style={{ fontSize: '0.9rem', pointerEvents: 'none' }}>{item.label}</span>
+                            <span style={{ fontSize: '0.9rem', pointerEvents: 'none' }}>{item.name}</span>
                         </div>
                     );
                 })}
