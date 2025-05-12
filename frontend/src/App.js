@@ -9,6 +9,7 @@ import Profile from "./components/Profile";
 import Logout from "./components/Logout";
 import Generate from "./components/GenerateShow";
 import MyFridge from "./components/MyFridge";
+import PrivateRoute from './components/PrivateRoute';
 import AddArticles from './components/AddArticles';
 function App() {
   /**
@@ -39,32 +40,72 @@ function App() {
    * strani. Klasične metode (<a href=""> in window.location) bi pomenile osvežitev aplikacije
    * in s tem dodatno obremenitev (ponovni izris komponente Header, ponastavitev Contextov,...)
    */
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/users/profile', {
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          updateUserData(data);
+        } else {
+          localStorage.removeItem('user');
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Session check failed:", err);
+        localStorage.removeItem('user');
+        setUser(null);
+      }
+    };
+
+    verifySession();
+  }, []);
+
+
   return (
-      <BrowserRouter>
-        <UserContext.Provider value={{
-          user: user,
-          setUserContext: updateUserData
-        }}>
-          <div className="App">
-            <Header title="My Application" />
+    <BrowserRouter>
+      <UserContext.Provider value={{
+        user: user,
+        setUserContext: updateUserData
+      }}>
+        <div className="App">
+          <Header title="My Application" />
 
-            <main className="container my-4 flex-grow-1">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />                
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/logout" element={<Logout />} />
-                <Route path="/generate" element={<Generate />} />
-                <Route path="/myfridge" element={<MyFridge/>} />
-                <Route path="/addarticles" element={<AddArticles/>}/>
-              </Routes>
-            </main>
+          <main className="container my-4 flex-grow-1">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/profile" element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              } />
+              <Route path="/generate" element={
+                <PrivateRoute>
+                  <Generate />
+                </PrivateRoute>
+              } />
+              <Route path="/myfridge" element={
+                <PrivateRoute>
+                  <MyFridge />
+                </PrivateRoute>
+              } />
+              <Route path="/addarticles" element={
+                <PrivateRoute>
+                  <AddArticles />
+                </PrivateRoute>
+              } />
+            </Routes>
+          </main>
 
-          </div>
-        </UserContext.Provider>
-      </BrowserRouter>
-    );
+        </div>
+      </UserContext.Provider>
+    </BrowserRouter>
+  );
 
 }
 

@@ -7,6 +7,7 @@ const initialIngredient = { name: "", quantity: "", unit: "g" };
 
 const AddArticles = () => {
   const [ingredients, setIngredients] = useState([{ ...initialIngredient }]);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (index, field, value) => {
     const updated = [...ingredients];
@@ -38,6 +39,9 @@ const AddArticles = () => {
       alert("Please fill out all fields for every ingredient.");
       return;
     }
+
+    setLoading(true);
+
     const res = await fetch("http://localhost:3001/myfridge", {
       method: "POST",
       credentials: "include",
@@ -46,17 +50,40 @@ const AddArticles = () => {
       },
       body: JSON.stringify(ingredients),
     });
-   
-    if(res.status === 201){
-       console.log(res)
+
+    setLoading(false);
+
+    if (res.status === 201) {
+      console.log(res);
       window.location.replace("/myfridge");
-    }else{
-      console.log(res)
+    } else {
+      console.log(res);
     }
   };
 
   return (
     <div className="container mt-4">
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div className="spinner-border text-light" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
+
       <h1 style={{ color: "rgb(163,188,4)" }}>Hello!</h1>
       <p
         style={{

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import {
   faCarrot,
   faFish,
@@ -26,6 +26,7 @@ import IngredientsMyFridge from "./IngredientsMyFridge";
 function MyFridge() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [fridgeItems, setFridgeItems] = useState([]);
 
   const handleItemSelection = (itemLabel) => {
     setSelectedItems((prev) =>
@@ -34,7 +35,6 @@ function MyFridge() {
         : [...prev, itemLabel]
     );
   };
-  const [fridgeItems, setFridgeItems] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:3001/myfridge`, {
@@ -47,7 +47,35 @@ function MyFridge() {
         return response.json();
       })
       .then((data) => {
-        setFridgeItems(data);
+        const iconMap = {
+          faCarrot,
+          faFish,
+          faCheese,
+          faEgg,
+          faBreadSlice,
+          faAppleAlt,
+          faDrumstickBite,
+          faPepperHot,
+          faLeaf,
+          faBacon,
+          faCookie,
+          faLemon,
+          faIceCream,
+          faPizzaSlice,
+          faHamburger,
+          faHotdog,
+          faSeedling,
+          faBottleWater,
+          faWineBottle,
+          faMugHot,
+        };
+
+        const itemsWithIcons = data.map((item) => ({
+          ...item,
+          icon: iconMap[item.icon] || faCarrot,
+        }));
+
+        setFridgeItems(itemsWithIcons);
       })
       .catch((error) => console.error("Error fetching fridge:", error));
   }, []);

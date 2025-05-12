@@ -11,6 +11,7 @@ var fridgeSchema = new Schema({
 	 	ref: 'barcode'
 	},
 	'addedOn' : Date,
+	'icon' : String,
 	'user' : {
 	 	type: Schema.Types.ObjectId,
 	 	ref: 'user'
