@@ -16,7 +16,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // vključimo routerje
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
-
+var fridgeRouter = require('./routes/fridgeRoutes');
 var app = express();
 const cors = require('cors');
 app.use(cors({
@@ -44,7 +44,12 @@ app.use(session({
   secret: 'work hard',
   resave: true,
   saveUninitialized: false,
-  store: MongoStore.create({mongoUrl: mongoDB})
+  store: MongoStore.create({mongoUrl: mongoDB}),
+  cookie: {
+    sameSite: 'lax', // or 'none' if using HTTPS across origins
+    secure: false,   // true if you're using HTTPS
+    httpOnly: true
+  }
 }));
 //Shranimo sejne spremenljivke v locals
 //Tako lahko do njih dostopamo v vseh view-ih (glej layout.hbs)
@@ -55,6 +60,7 @@ app.use(function (req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/myfridge', fridgeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
