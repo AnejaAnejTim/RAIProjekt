@@ -1,5 +1,5 @@
 var FridgeModel = require("../models/fridgeModel.js");
-
+var openai = require('../openai')
 /**
  * fridgeController.js
  *
@@ -49,41 +49,65 @@ module.exports = {
   /**
    * fridgeController.create()
    */
-  create: function (req, res) {
+  create: async function (req, res) {
     var user = req.session.userId;
-    const ingredients = req.body;
+    var ingredients = req.body;
+
+
     if (!Array.isArray(ingredients)) {
       return res
         .status(400)
         .json({ error: "Expected an array of ingredients" });
     }
-    ingredients.forEach((ingredient) => {
-      var fridge = new FridgeModel({
-        name:
-          String(ingredient.name).charAt(0).toUpperCase() +
-          String(ingredient.name).slice(1),
-        unit : ingredient.unit,
-        quantity: ingredient.quantity,
-        expiration: ingredient.expiration,
-        addedOn: new Date(),
-        user: user,
+
+  
+    const msg = 'Respond the same ONLY json (you can fix any typos, but get to the closest edible food, dont assume that the item is named like the icons) only add the best fitting icon (like icon : ) from this list: faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot. Remove any non-edible items (do not remove edible alcohol) from the list: ' + JSON.stringify(ingredients);
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: msg }],
       });
-      fridge.save(function (err, fridge) {
-        if (err) {
+
+      ingredients = JSON.parse(response.choices[0].message.content);
+      for (const ingredient of ingredients) {
+        var fridge = new FridgeModel({
+          name: String(ingredient.name).charAt(0).toUpperCase() + String(ingredient.name).slice(1),
+          unit: ingredient.unit,
+          quantity: ingredient.quantity,
+          icon: ingredient.icon,
+          expiration: ingredient.expiration,
+          addedOn: new Date(),
+          user: user,
+        });
+
+        try {
+          await fridge.save();
+        } catch (err) {
           return res.status(500).json({
             message: "Error when creating fridge",
             error: err,
           });
         }
+      }
+
+      return res.status(201).json({ message: "Ingredients added successfully" });
+
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Error with OpenAI API",
+        error: err,
       });
-    });
-    return res.status(201).json({ message: "Ingredients added successfully" });
+    }
+
+
     /*
         var fridge = new FridgeModel({
-			item_name : req.body.item_name,
-			quantity : req.body.quantity,
-			addedOn : req.body.addedOn,
-			user : req.body.user
+      item_name : req.body.item_name,
+      quantity : req.body.quantity,
+      addedOn : req.body.addedOn,
+      user : req.body.user
         });
 
         fridge.save(function (err, fridge) {
