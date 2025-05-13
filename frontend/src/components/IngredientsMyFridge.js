@@ -186,7 +186,12 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                                 />
                             )}
                             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '2px', pointerEvents: 'none' }} />
-                            <span style={{ fontSize: '0.9rem', pointerEvents: 'none' }}>{item.name}</span>
+                            <div style={{ textAlign: 'center', pointerEvents: 'none' }}>
+                                  <div style={{ fontSize: '0.9rem' }}>{item.name}</div>
+                                  <div style={{ fontSize: '0.8rem', color: '#555' }}>
+                                    {item.quantity} {item.unit}
+                                  </div>
+                                </div>
                         </div>
                     );
                 })}

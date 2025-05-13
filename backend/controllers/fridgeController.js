@@ -28,7 +28,7 @@ module.exports = {
   show: function (req, res) {
     var user = req.session.userId
 
-    FridgeModel.find({ user: user }, function (err, fridge) {
+    FridgeModel.find({user: user}, function (err, fridge) {
       if (err) {
         return res.status(500).json({
           message: "Error when getting fridge.",
@@ -57,19 +57,38 @@ module.exports = {
     if (!Array.isArray(ingredients)) {
       return res
         .status(400)
-        .json({ error: "Expected an array of ingredients" });
+        .json({error: "Expected an array of ingredients"});
     }
 
-  
-    const msg = 'Respond the same ONLY json (you can fix any typos, but get to the closest edible food, dont assume that the item is named like the icons) only add the best fitting icon (like icon : ) from this list: faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot. Remove any non-edible items (do not remove edible alcohol) from the list: ' + JSON.stringify(ingredients);
 
+    const msg = `
+        Odgovori IZKLJUČNO z veljavnim JSON array-em. Vsak objekt mora imeti lastnosti:
+        - "name" (nespremenjeno ime iz vhodnih podatkov),
+        - "icon" (najbolj ustrezna ikona iz spodnjega seznama).
+
+        DOVOLJENE IKONE (uporabi ENO izmed spodnjih):
+        [faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot]
+
+        PRAVILA:
+        1. Ne spremeni imena ("name") NITI v črki — naj ostane točno tako kot je.
+        2. Ne odstrani lastnosti kot so "quantity", "unit", "addedOn", če obstajajo.
+        3. Odstrani vse, kar ni užitna sestavina (npr. osebe, države, neživilski predmeti, znamke ipd.).
+           - Primeri, ki jih MORAŠ ODSTRANITI: truplo, Slovenija, Andrejc, kamen, papir, plastika, detergent.
+        4. Sushi kis, jušne kocke, alkohol in druge užitne sestavine MORAJO OSTATI.
+        5. Če je ista sestavina večkrat, naj ima vedno isto ikono.
+        6. Ne dodaj nobenega dodatnega besedila, razlage ali komentarjev. Samo JSON.
+
+        Vhodni podatki:
+        ${JSON.stringify(ingredients)}
+        `;
+    console.log(ingredients)
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: msg }],
+        model: "gpt-4.1",
+        messages: [{role: "user", content: msg}],
       });
-
       ingredients = JSON.parse(response.choices[0].message.content);
+      console.log(ingredients)
       for (const ingredient of ingredients) {
         var fridge = new FridgeModel({
           name: String(ingredient.name).charAt(0).toUpperCase() + String(ingredient.name).slice(1),
@@ -91,7 +110,7 @@ module.exports = {
         }
       }
 
-      return res.status(201).json({ message: "Ingredients added successfully" });
+      return res.status(201).json({message: "Ingredients added successfully"});
 
     } catch (err) {
       console.log(err);
@@ -129,7 +148,7 @@ module.exports = {
   update: function (req, res) {
     var id = req.params.id;
 
-    FridgeModel.findOne({ _id: id }, function (err, fridge) {
+    FridgeModel.findOne({_id: id}, function (err, fridge) {
       if (err) {
         return res.status(500).json({
           message: "Error when getting fridge",
