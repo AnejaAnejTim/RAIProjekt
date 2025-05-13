@@ -4,7 +4,7 @@ var Schema   = mongoose.Schema;
 var recipeSchema = new Schema({
 	'title' : String,
 	'description' : String,
-	'description' : String,
+	'ingredients' : String,
 	'prep_time' : String,
 	'cook_time' : String,
 	'user' : {
