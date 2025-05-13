@@ -46,7 +46,35 @@ function GenerateShow() {
         return response.json();
       })
       .then((data) => {
-        setFoodItems(data);
+        const iconMap = {
+          "faCarrot": faCarrot,
+          "faFish": faFish,
+          "faCheese": faCheese,
+          "faEgg": faEgg,
+          "faBreadSlice": faBreadSlice,
+          "faAppleAlt": faAppleAlt,
+          "faDrumstickBite": faDrumstickBite,
+          "faPepperHot": faPepperHot,
+          "faLeaf": faLeaf,
+          "faBacon": faBacon,
+          "faCookie": faCookie,
+          "faLemon": faLemon,
+          "faIceCream": faIceCream,
+          "faPizzaSlice": faPizzaSlice,
+          "faHamburger": faHamburger,
+          "faHotdog": faHotdog,
+          "faSeedling": faSeedling,
+          "faBottleWater": faBottleWater,
+          "faWineBottle": faWineBottle,
+          "faMugHot": faMugHot,
+        };
+
+        const itemsWithIcons = data.map((item) => ({
+          ...item,
+          icon: iconMap[item.icon] || faCarrot, // default fallback icon
+        }));
+
+        setFoodItems(itemsWithIcons);
       })
       .catch((error) => console.error("Error fetching fridge:", error));
   }, []);
