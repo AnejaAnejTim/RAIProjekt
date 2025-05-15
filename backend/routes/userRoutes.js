@@ -12,6 +12,8 @@ router.get('/:id', userController.show);
 
 router.post('/', userController.create);
 router.post('/login', userController.login);
+router.post('/appLogin', userController.appLogin);
+router.post('/logout', userController.appLogout);
 
 router.put('/:id', userController.update);
 

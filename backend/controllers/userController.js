@@ -179,5 +179,35 @@ module.exports = {
                 }
             });
         }
-    }
+    },
+    appLogin: function(req, res, next) {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required.' });
+        }
+
+        UserModel.authenticate(username, password, function(err, user) {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error during authentication.' });
+        }
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid username or password.' });
+        }
+
+        req.session.userId = user._id;
+        const { password, ...userData } = user.toObject();
+        return res.status(200).json(userData);
+        });
+    
+    },
+
+    appLogout: function(req, res){
+         if(req.session){
+            req.session.destroy(function(err){
+              return res.status(200).json({});
+            });
+        }
+    },
+
 };
