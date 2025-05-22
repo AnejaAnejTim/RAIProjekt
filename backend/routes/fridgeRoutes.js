@@ -26,7 +26,7 @@ router.get('/',requiresLogin, fridgeController.show);
  * POST
  */
 router.post('/', requiresLogin, fridgeController.create);
-
+router.post('/barcodeScan', requiresLogin, fridgeController.createFromBarcode);
 /*
  * PUT
  */

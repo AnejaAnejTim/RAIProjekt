@@ -94,7 +94,7 @@ module.exports = {
           name: String(ingredient.name).charAt(0).toUpperCase() + String(ingredient.name).slice(1),
           unit: ingredient.unit,
           quantity: ingredient.quantity,
-          icon: ingredient.icon,
+          icon: 'faBarcode',
           expiration: ingredient.expiration,
           addedOn: new Date(),
           user: user,
@@ -119,72 +119,66 @@ module.exports = {
         error: err,
       });
     }
-
-
-    /*
-        var fridge = new FridgeModel({
-      item_name : req.body.item_name,
-      quantity : req.body.quantity,
-      addedOn : req.body.addedOn,
-      user : req.body.user
-        });
-
-        fridge.save(function (err, fridge) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when creating fridge',
-                    error: err
-                });
-            }
-
-            return res.status(201).json(fridge);
-        });
-        */
   },
 
-  /**
-   * fridgeController.update()
-   */
-  update: function (req, res) {
+  update: async function(req, res) {
     var id = req.params.id;
+    var updateData = req.body;
+    var user = req.session.userId;
 
-    FridgeModel.findOne({_id: id}, function (err, fridge) {
-      if (err) {
-        return res.status(500).json({
-          message: "Error when getting fridge",
-          error: err,
-        });
+    try {
+      // Find the fridge item by id and user, then update it
+      const updatedFridge = await FridgeModel.findOneAndUpdate(
+        { _id: id, user: user },
+        updateData,
+        { new: true }
+      );
+
+      if (!updatedFridge) {
+        return res.status(404).json({ message: "Fridge item not found or unauthorized" });
       }
 
-      if (!fridge) {
-        return res.status(404).json({
-          message: "No such fridge",
-        });
-      }
-
-      fridge.item_name = req.body.item_name
-        ? req.body.item_name
-        : fridge.item_name;
-      fridge.quantity = req.body.quantity ? req.body.quantity : fridge.quantity;
-      fridge.expiration = req.body.expiration
-        ? req.body.expiration
-        : fridge.expiration;
-      fridge.barcode = req.body.barcode ? req.body.barcode : fridge.barcode;
-      fridge.addedOn = req.body.addedOn ? req.body.addedOn : fridge.addedOn;
-      fridge.user = req.body.user ? req.body.user : fridge.user;
-
-      fridge.save(function (err, fridge) {
-        if (err) {
-          return res.status(500).json({
-            message: "Error when updating fridge.",
-            error: err,
-          });
-        }
-
-        return res.json(fridge);
+      return res.status(200).json(updatedFridge);
+    } catch (err) {
+      return res.status(500).json({
+        message: "Error when updating the fridge item",
+        error: err,
       });
-    });
+    }
   },
+
+  createFromBarcode: async function(req, res){
+    const user = req.session.userId;
+    const ingredient = req.body;
+    try {
+      ingredient.name =
+        String(ingredient.name).charAt(0).toUpperCase() +
+        String(ingredient.name).slice(1);
+
+      const fridge = new FridgeModel({
+        name: ingredient.name,
+        unit: ingredient.unit || '',
+        quantity: ingredient.quantity || '',
+        icon: "faBarcode",
+        expiration: ingredient.expiration || null,
+        addedOn: new Date(),
+        user: user,
+      });
+
+      await fridge.save();
+
+      return res.status(201).json({ message: "Ingredient added successfully" });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        message: "Error with OpenAI API or saving ingredient",
+        error: err,
+      });
+    }
+  },
+
+  
 
   /**
    * fridgeController.remove()

@@ -7,7 +7,7 @@ import {
   faAppleAlt, faDrumstickBite, faPepperHot, faLeaf,
   faBacon, faCookie, faLemon, faIceCream, faPizzaSlice,
   faHamburger, faHotdog, faSeedling, faBottleWater,
-  faWineBottle, faMugHot
+  faWineBottle, faMugHot, faBarcode
 } from "@fortawesome/free-solid-svg-icons";
 import IngredientsGenerate from "./IngredientsGenerate";
 import Basket from "./Basket";
@@ -37,7 +37,7 @@ function GenerateShow() {
           "faPepperHot": faPepperHot, "faLeaf": faLeaf, "faBacon": faBacon, "faCookie": faCookie,
           "faLemon": faLemon, "faIceCream": faIceCream, "faPizzaSlice": faPizzaSlice,
           "faHamburger": faHamburger, "faHotdog": faHotdog, "faSeedling": faSeedling,
-          "faBottleWater": faBottleWater, "faWineBottle": faWineBottle, "faMugHot": faMugHot
+          "faBottleWater": faBottleWater, "faWineBottle": faWineBottle, "faMugHot": faMugHot, "faBarcode": faBarcode
         };
 
         const itemsWithIcons = data.map((item) => ({

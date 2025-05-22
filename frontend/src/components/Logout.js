@@ -1,20 +1,36 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { UserContext } from '../userContext';
 import { Navigate } from 'react-router-dom';
 
-function Logout(){
-    const userContext = useContext(UserContext); 
-    useEffect(function(){
-        const logout = async function(){
-            userContext.setUserContext(null);
-            const res = await fetch("http://localhost:3001/users/logout");
-        }
-        logout();
-    }, []);
+function Logout() {
+  const userContext = useContext(UserContext);
+  const [loggedOut, setLoggedOut] = useState(false); 
 
-    return (
-        <Navigate replace to="/" />
-    );
+  useEffect(() => {
+    const logout = async () => {
+      try {
+        userContext.setUserContext(null);
+        const res = await fetch("http://localhost:3001/users/logout", {
+          method: 'POST',
+          credentials: 'include', 
+        });
+
+        if (!res.ok) {
+          console.error("Logout failed:", res.statusText);
+        }
+        setLoggedOut(true);
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    };
+
+    logout();
+  }, [userContext]);
+
+  if (loggedOut) {
+    return <Navigate replace to="/" />;
+  }
+  return <div>Logging out...</div>;
 }
 
 export default Logout;
