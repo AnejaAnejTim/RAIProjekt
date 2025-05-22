@@ -62,32 +62,35 @@ module.exports = {
 
 
     const msg = `
-        Odgovori IZKLJUČNO z veljavnim JSON array-em. Vsak objekt mora imeti lastnosti:
-        - "name" (nespremenjeno ime iz vhodnih podatkov),
-        - "icon" (najbolj ustrezna ikona iz spodnjega seznama).
+    Odgovori IZKLJUČNO z veljavnim JSON array-em (brez oznak kot so \`\`\`json ali dodatnih razlag).
 
-        DOVOLJENE IKONE (uporabi ENO izmed spodnjih):
-        [faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot]
+    Vsak objekt naj vsebuje naslednje lastnosti:
+    - "name": točno takšno kot je v vhodu (brez prevodov ali sprememb),
+    - "icon": najbolj ustrezna ikona iz DOVOLJENIH ikon spodaj (vedno ENA, brez dodajanja drugih lastnosti).
 
-        PRAVILA:
-        1. Ne spremeni imena ("name") NITI v črki — naj ostane točno tako kot je.
-        2. Ne odstrani lastnosti kot so "quantity", "unit", "addedOn", če obstajajo.
-        3. Odstrani vse, kar ni užitna sestavina (npr. osebe, države, neživilski predmeti, znamke ipd.).
-           - Primeri, ki jih MORAŠ ODSTRANITI: truplo, Slovenija, Andrejc, kamen, papir, plastika, detergent.
-        4. Sushi kis, jušne kocke, alkohol in druge užitne sestavine MORAJO OSTATI.
-        5. Če je ista sestavina večkrat, naj ima vedno isto ikono.
-        6. Ne dodaj nobenega dodatnega besedila, razlage ali komentarjev. Samo JSON.
+    DOVOLJENE IKONE:
+    [faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot]
 
-        Vhodni podatki:
-        ${JSON.stringify(ingredients)}
-        `;
+    PRAVILA:
+    1. Imena ("name") naj ostanejo popolnoma nespremenjena.
+    2. Ohrani vse dodatne lastnosti kot so "quantity", "unit", "addedOn", če obstajajo.
+    3. Odstrani vse neužitne artikle (npr. osebe, države, predmete kot so plastika, papir, detergent, truplo, Slovenija, Andrejc itd.).
+    4. Ne odstranjuj užitnih sestavin kot so sushi kis, jušne kocke, alkohol itd.
+    5. Če se enaka sestavina ponovi, mora vedno imeti enako ikono.
+    6. Ne dodaj komentarjev ali dodatnih besed. Odgovori samo z JSON array-em.
+
+    Vhodni podatki:
+    ${JSON.stringify(ingredients)}
+    `;
     console.log(ingredients)
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4.1",
+        model: "gpt-4.1-mini",
         messages: [{role: "user", content: msg}],
       });
+      console.log(response.choices[0].message.content);
       ingredients = JSON.parse(response.choices[0].message.content);
+
       console.log(ingredients)
       for (const ingredient of ingredients) {
         var fridge = new FridgeModel({
