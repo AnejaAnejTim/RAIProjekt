@@ -4,8 +4,9 @@ import { Navigate } from 'react-router-dom';
 function Index(){
     return (
 
-               <h1>Hello</h1>
+      <h1>Hello</h1>
     );
 }
 
 export default Index;
+
