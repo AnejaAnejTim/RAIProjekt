@@ -17,6 +17,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var fridgeRouter = require('./routes/fridgeRoutes');
+var recipeRouter = require('./routes/recipeRoutes');
+var barcodeRouter = require('./routes/barcodeRoutes');
 var app = express();
 const cors = require('cors');
 app.use(cors({
@@ -61,6 +63,8 @@ app.use(function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/myfridge', fridgeRouter);
+app.use('/recipes', recipeRouter);
+app.use('/barcodes', barcodeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

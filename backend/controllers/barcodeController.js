@@ -27,9 +27,9 @@ module.exports = {
      * barcodeController.show()
      */
     show: function (req, res) {
-        var id = req.params.id;
+        var code = req.params.id;
 
-        BarcodeModel.findOne({_id: id}, function (err, barcode) {
+        BarcodeModel.findOne({code: code}, function (err, barcode) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting barcode.',
@@ -54,8 +54,8 @@ module.exports = {
         var barcode = new BarcodeModel({
 			code : req.body.code,
 			product_name : req.body.product_name,
-			brand : req.body.brand,
-			weight : req.body.weight
+			weight : req.body.weight,
+            unit : req.body.unit
         });
 
         barcode.save(function (err, barcode) {

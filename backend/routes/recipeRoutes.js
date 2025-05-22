@@ -2,6 +2,17 @@ var express = require('express');
 var router = express.Router();
 var recipeController = require('../controllers/recipeController.js');
 
+function requiresLogin(req, res, next){
+    if(req.session && req.session.userId){
+        return next();
+    } else{
+        console.log(req.session)
+        var err = new Error("You must be logged in to view this page");
+        err.status = 401;
+        return next(err);
+    }
+}
+
 /*
  * GET
  */
@@ -15,7 +26,7 @@ router.get('/:id', recipeController.show);
 /*
  * POST
  */
-router.post('/', recipeController.create);
+router.post('/', requiresLogin, recipeController.create);
 
 /*
  * PUT

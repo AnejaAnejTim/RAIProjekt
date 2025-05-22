@@ -20,6 +20,7 @@ import {
   faBottleWater,
   faWineBottle,
   faMugHot,
+  faBarcode
 } from "@fortawesome/free-solid-svg-icons";
 import IngredientsMyFridge from "./IngredientsMyFridge";
 
@@ -68,6 +69,7 @@ function MyFridge() {
           faBottleWater,
           faWineBottle,
           faMugHot,
+          faBarcode
         };
 
         const itemsWithIcons = data.map((item) => ({

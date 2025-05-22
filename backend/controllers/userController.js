@@ -55,23 +55,44 @@ module.exports = {
      * userController.create()
      */
     create: function (req, res) {
-        var user = new UserModel({
-			username : req.body.username,
-			password : req.body.password,
-			email : req.body.email
-        });
-
-        user.save(function (err, user) {
+        
+        UserModel.findOne({
+            $or: [
+                { email: req.body.email },
+                { username: req.body.username }
+            ]
+        }, function (err, existingUser) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when creating user',
+                    message: 'Error checking existing user',
                     error: err
                 });
             }
 
-            return res.status(201).json(user);
-            //return res.redirect('/users/login');
+            if (existingUser) {
+                return res.status(301).json({
+                    message: 'User already exists'
+                });
+            }
+
+            var user = new UserModel({
+                username: req.body.username,
+                password: req.body.password,
+                email: req.body.email
+            });
+
+            user.save(function (err, user) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when creating user',
+                        error: err
+                    });
+                }
+
+                return res.status(201).json(user);
+            });
         });
+
     },
 
     /**
@@ -79,7 +100,12 @@ module.exports = {
      */
     update: function (req, res) {
         var id = req.params.id;
-
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(req.body.email)) {
+            return res.status(400).json({
+                message: 'Invalid email format'
+            });
+        }
         UserModel.findOne({_id: id}, function (err, user) {
             if (err) {
                 return res.status(500).json({
@@ -179,5 +205,35 @@ module.exports = {
                 }
             });
         }
-    }
+    },
+    appLogin: function(req, res, next) {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required.' });
+        }
+
+        UserModel.authenticate(username, password, function(err, user) {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error during authentication.' });
+        }
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid username or password.' });
+        }
+
+        req.session.userId = user._id;
+        const { password, ...userData } = user.toObject();
+        return res.status(200).json(userData);
+        });
+    
+    },
+
+    appLogout: function(req, res){
+         if(req.session){
+            req.session.destroy(function(err){
+              return res.status(200).json({});
+            });
+        }
+    },
+
 };

@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function GenerateFilters() {
+function GenerateFilters({ onFilterChange }) {
     const [selectedMealType, setSelectedMealType] = useState('');
     const [canUseOtherIngredients, setCanUseOtherIngredients] = useState(false);
 
+    useEffect(() => {
+        // Make sure to pass individual updates instead of the whole object
+        onFilterChange('mealType', selectedMealType);
+        onFilterChange('canUseOtherIngredients', canUseOtherIngredients);
+    }, [selectedMealType, canUseOtherIngredients, onFilterChange]);
+
     const handleCheckboxChange = (event) => {
-        const { value } = event.target;
-        setSelectedMealType(value);
+        setSelectedMealType(event.target.value);
     };
 
     const handleToggleChange = () => {
@@ -20,7 +25,6 @@ function GenerateFilters() {
             </div>
             <div style={{ marginBottom: '20px' }}>
                 <h5>Ali lahko naš kuhar uporabi sestavine, ki niso v vašem hladilniku?</h5>
-                {/* Center toggle */}
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                         <div
