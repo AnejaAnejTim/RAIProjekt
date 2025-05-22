@@ -11,6 +11,8 @@ import Generate from "./components/GenerateShow";
 import MyFridge from "./components/MyFridge";
 import PrivateRoute from './components/PrivateRoute';
 import AddArticles from './components/AddArticles';
+import Recipe from './components/RecipeShow';
+import RecipeHistory from "./components/RecipeHistory";
 function App() {
   /**
    * Podatek o tem, ali je uporabnik prijavljen ali ne, bomo potrebovali v vseh komponentah.
@@ -99,9 +101,18 @@ function App() {
                   <AddArticles />
                 </PrivateRoute>
               } />
+              <Route path="/recipe" element={
+                <PrivateRoute>
+                  <Recipe />
+                </PrivateRoute>
+              } />
+              <Route path="/recipehistory" element={
+                       <PrivateRoute>
+                         <RecipeHistory />
+                       </PrivateRoute>
+                     } />
             </Routes>
           </main>
-
         </div>
       </UserContext.Provider>
     </BrowserRouter>
