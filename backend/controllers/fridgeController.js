@@ -97,7 +97,7 @@ module.exports = {
           name: String(ingredient.name).charAt(0).toUpperCase() + String(ingredient.name).slice(1),
           unit: ingredient.unit,
           quantity: ingredient.quantity,
-          icon: 'faBarcode',
+          icon: ingredient.icon,
           expiration: ingredient.expiration,
           addedOn: new Date(),
           user: user,
@@ -124,7 +124,7 @@ module.exports = {
     }
   },
 
-  update: async function(req, res) {
+  update: async function (req, res) {
     var id = req.params.id;
     var updateData = req.body;
     var user = req.session.userId;
@@ -132,13 +132,13 @@ module.exports = {
     try {
       // Find the fridge item by id and user, then update it
       const updatedFridge = await FridgeModel.findOneAndUpdate(
-        { _id: id, user: user },
+        {_id: id, user: user},
         updateData,
-        { new: true }
+        {new: true}
       );
 
       if (!updatedFridge) {
-        return res.status(404).json({ message: "Fridge item not found or unauthorized" });
+        return res.status(404).json({message: "Fridge item not found or unauthorized"});
       }
 
       return res.status(200).json(updatedFridge);
@@ -150,7 +150,7 @@ module.exports = {
     }
   },
 
-  createFromBarcode: async function(req, res){
+  createFromBarcode: async function (req, res) {
     const user = req.session.userId;
     const ingredient = req.body;
     try {
@@ -170,7 +170,7 @@ module.exports = {
 
       await fridge.save();
 
-      return res.status(201).json({ message: "Ingredient added successfully" });
+      return res.status(201).json({message: "Ingredient added successfully"});
 
     } catch (err) {
       console.error(err);
@@ -181,7 +181,6 @@ module.exports = {
     }
   },
 
-  
 
   /**
    * fridgeController.remove()
