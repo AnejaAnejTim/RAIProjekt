@@ -1,9 +1,10 @@
 var UserModel = require('../models/userModel.js');
-
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
 /**
  * userController.js
  *
- * @description :: Server-side logic for managing users.
+ * @description :: Server-side logic for managing users
  */
 module.exports = {
 
@@ -206,26 +207,19 @@ module.exports = {
             });
         }
     },
-    appLogin: function(req, res, next) {
+    appLogin: function (req, res, next) {
         const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password are required.' });
-        }
 
-        UserModel.authenticate(username, password, function(err, user) {
-        if (err) {
-            return res.status(500).json({ error: 'Internal server error during authentication.' });
-        }
-
-        if (!user) {
+        UserModel.authenticate(username, password, function (err, user) {
+            if (err || !user) {
             return res.status(401).json({ error: 'Invalid username or password.' });
-        }
+            }
 
-        req.session.userId = user._id;
-        const { password, ...userData } = user.toObject();
-        return res.status(200).json(userData);
+            const payload = { id: user._id, username: user.username };
+            const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
+
+            return res.status(200).json({ token, user: payload });
         });
-    
     },
 
     appLogout: function(req, res){
@@ -235,5 +229,32 @@ module.exports = {
             });
         }
     },
+   appValidation: async function (req, res) {
+        try {
+            console.log('Received appValidation request');
+            console.log('req.user:', req.user);
+
+            const userId = req.user?.id || req.user?._id;
+            console.log('Extracted userId:', userId);
+
+            if (!userId) {
+            console.log('User ID missing in token');
+            return res.status(400).json({ error: 'User ID missing in token' });
+            }
+
+            const user = await UserModel.findById(userId).exec();
+
+            if (!user) {
+            console.log('User not found for id:', userId);
+            return res.status(404).json({ error: 'User not found' });
+            }
+
+            console.log('User found:', user);
+            return res.json(user);
+        } catch (err) {
+            console.error('Unhandled error in appValidation:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 
 };

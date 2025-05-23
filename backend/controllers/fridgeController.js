@@ -151,35 +151,41 @@ module.exports = {
   },
 
   createFromBarcode: async function (req, res) {
-    const user = req.session.userId;
-    const ingredient = req.body;
-    try {
-      ingredient.name =
-        String(ingredient.name).charAt(0).toUpperCase() +
-        String(ingredient.name).slice(1);
-
-      const fridge = new FridgeModel({
-        name: ingredient.name,
-        unit: ingredient.unit || '',
-        quantity: ingredient.quantity || '',
-        icon: "faBarcode",
-        expiration: ingredient.expiration || null,
-        addedOn: new Date(),
-        user: user,
-      });
-
-      await fridge.save();
-
-      return res.status(201).json({message: "Ingredient added successfully"});
-
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({
-        message: "Error with OpenAI API or saving ingredient",
-        error: err,
-      });
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized: no user info found' });
     }
-  },
+
+    const ingredient = req.body;
+
+    ingredient.name =
+      String(ingredient.name).charAt(0).toUpperCase() +
+      String(ingredient.name).slice(1);
+
+    const fridge = new FridgeModel({
+      name: ingredient.name,
+      unit: ingredient.unit || '',
+      quantity: ingredient.quantity || '',
+      icon: "faBarcode",
+      expiration: ingredient.expiration || null,
+      addedOn: new Date(),
+      user: userId,
+    });
+
+    await fridge.save();
+
+    return res.status(201).json({ message: "Ingredient added successfully" });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: err.message || err,
+      error: err,
+    });
+  }
+}
+,
 
 
   /**

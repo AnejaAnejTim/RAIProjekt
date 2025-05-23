@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var fridgeController = require('../controllers/fridgeController.js');
+const requireAuth = require('../middleware/auth.js');
 
 function requiresLogin(req, res, next){
     if(req.session && req.session.userId){
@@ -26,7 +27,7 @@ router.get('/',requiresLogin, fridgeController.show);
  * POST
  */
 router.post('/', requiresLogin, fridgeController.create);
-router.post('/barcodeScan', requiresLogin, fridgeController.createFromBarcode);
+router.post('/barcodeScan', requireAuth, fridgeController.createFromBarcode);
 /*
  * PUT
  */
