@@ -15,7 +15,7 @@ const Header = ({ title }) => {
             style={{ width: "50px", height: "50px", objectFit: "contain" }}
             className="me-1"
           />
-          <h1 className="h4 m-0">YummyAI</h1>
+          <Link to="/" className="nav-link text-white text-decoration-none"><h1 className="h4 m-0">YummyAI</h1></Link>
         </div>
             <nav>
               <ul className="nav">

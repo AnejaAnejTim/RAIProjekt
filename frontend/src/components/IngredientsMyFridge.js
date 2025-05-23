@@ -161,10 +161,11 @@ function IngredientsMyFridge({ foodItems, selectedItems, handleItemSelection, se
                                 height: '100%',
                                 marginBottom: '10px',
                                 marginTop: '10px',
-                                transition: 'filter 0.2s ease-in-out',
+                                transition: 'transform 0.2s ease, filter 0.2s ease-in-out',
+                                transform: isHovered ? 'scale(1.03)' : 'scale(1)',
                                 filter: isHovered ? 'brightness(90%)' : 'none',
                                 cursor: canUseMultiSelect ? 'pointer' : 'default',
-                            }}
+                              }}
                         >
                             {!canUseMultiSelect && isHovered && (
                                 <img

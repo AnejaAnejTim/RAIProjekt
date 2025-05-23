@@ -67,6 +67,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
               onMouseLeave={() => setHoveredItem(null)}
               onClick={() => handleItemSelection(item._id)}
               style={{
+                position: 'relative',
                 backgroundColor: isSelected ? '#b0d16b' : 'rgba(255, 255, 255, 0.5)',
                 padding: '5px',
                 borderRadius: '5px',
@@ -74,13 +75,13 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                cursor: 'pointer',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
                 width: '90%',
                 height: '100%',
                 marginBottom: '10px',
                 marginTop: '10px',
-                transition: 'filter 0.2s ease-in-out',
+                transition: 'transform 0.2s ease, filter 0.2s ease-in-out',
+                transform: isHovered ? 'scale(1.03)' : 'scale(1)',
                 filter: isHovered ? 'brightness(90%)' : 'none',
               }}
             >
