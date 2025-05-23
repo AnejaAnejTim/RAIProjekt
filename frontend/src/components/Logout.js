@@ -11,7 +11,7 @@ function Logout() {
       try {
         userContext.setUserContext(null);
         const res = await fetch("http://localhost:3001/users/logout", {
-          method: 'POST',
+          method: 'GET',
           credentials: 'include', 
         });
 

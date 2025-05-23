@@ -51,24 +51,60 @@ module.exports = {
      * barcodeController.create()
      */
     create: function (req, res) {
-        var barcode = new BarcodeModel({
-			code : req.body.code,
-			product_name : req.body.product_name,
-			weight : req.body.weight,
-            unit : req.body.unit
-        });
+        const { code, product_name, weight, unit, brand } = req.body;
 
-        barcode.save(function (err, barcode) {
+        if (!code) {
+            return res.status(400).json({ message: 'Barcode "code" is required.' });
+        }
+
+        BarcodeModel.findOne({ code: code }, function (err, existingBarcode) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when creating barcode',
+                    message: 'Error when finding barcode.',
                     error: err
                 });
             }
 
-            return res.status(201).json(barcode);
+            if (!existingBarcode) {
+                const newBarcode = new BarcodeModel({
+                    code,
+                    product_name,
+                    weight,
+                    unit,
+                    brand
+                });
+
+                newBarcode.save(function (err, savedBarcode) {
+                    if (err) {
+                        return res.status(500).json({
+                            message: 'Error when creating barcode.',
+                            error: err
+                        });
+                    }
+
+                    return res.status(201).json(savedBarcode);
+                });
+            } else {
+                existingBarcode.code = code || existingBarcode.code;
+                existingBarcode.product_name = product_name || existingBarcode.product_name;
+                existingBarcode.brand = brand || existingBarcode.brand;
+                existingBarcode.weight = weight || existingBarcode.weight;
+                existingBarcode.unit = unit || existingBarcode.unit;
+
+                existingBarcode.save(function (err, updatedBarcode) {
+                    if (err) {
+                        return res.status(500).json({
+                            message: 'Error when updating barcode.',
+                            error: err
+                        });
+                    }
+
+                    return res.json(updatedBarcode);
+                });
+            }
         });
     },
+
 
     /**
      * barcodeController.update()

@@ -94,7 +94,7 @@ module.exports = {
           name: String(ingredient.name).charAt(0).toUpperCase() + String(ingredient.name).slice(1),
           unit: ingredient.unit,
           quantity: ingredient.quantity,
-          icon: 'faBarcode',
+          icon: ingredient.icon,
           expiration: ingredient.expiration,
           addedOn: new Date(),
           user: user,
@@ -127,7 +127,7 @@ module.exports = {
     var user = req.session.userId;
 
     try {
-      // Find the fridge item by id and user, then update it
+      
       const updatedFridge = await FridgeModel.findOneAndUpdate(
         { _id: id, user: user },
         updateData,
