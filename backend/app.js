@@ -19,6 +19,7 @@ var usersRouter = require('./routes/userRoutes');
 var fridgeRouter = require('./routes/fridgeRoutes');
 var recipeRouter = require('./routes/recipeRoutes');
 var barcodeRouter = require('./routes/barcodeRoutes');
+var loginConfirmationRoutes = require('./routes/loginConfirmationRoutes');
 var app = express();
 const cors = require('cors');
 app.use(cors({
@@ -59,12 +60,17 @@ app.use(function (req, res, next) {
   res.locals.session = req.session;
   next();
 });
+const auth = require('./middleware/auth');
 
+app.get('/test-auth', auth, (req, res) => {
+  res.json({ success: true, user: req.user });
+});
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/myfridge', fridgeRouter);
 app.use('/recipes', recipeRouter);
 app.use('/barcodes', barcodeRouter);
+app.use('/login-confirmation', loginConfirmationRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -73,13 +79,15 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  if (
+      req.originalUrl.startsWith('/login-confirmation') ||
+      req.originalUrl.startsWith('/api') ||
+      req.headers.accept && req.headers.accept.includes('application/json')
+  ) {
+    res.json({ error: err.message });
+  } else {
+    res.render('error');
+  }
 });
-
 module.exports = app;
