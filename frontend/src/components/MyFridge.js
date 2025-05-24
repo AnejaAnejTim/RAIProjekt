@@ -1,26 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  faCarrot,
-  faFish,
-  faCheese,
-  faEgg,
-  faBreadSlice,
-  faAppleAlt,
-  faDrumstickBite,
-  faPepperHot,
-  faLeaf,
-  faBacon,
-  faCookie,
-  faLemon,
-  faIceCream,
-  faPizzaSlice,
-  faHamburger,
-  faHotdog,
-  faSeedling,
-  faBottleWater,
-  faWineBottle,
-  faMugHot,
-} from "@fortawesome/free-solid-svg-icons";
+import iconMap from "../utils/iconMap";
 import IngredientsMyFridge from "./IngredientsMyFridge";
 
 function MyFridge() {
@@ -35,6 +14,11 @@ function MyFridge() {
         : [...prev, itemLabel]
     );
   };
+  
+  function handleRemoveItemFromList(itemId) {
+    setFridgeItems(prevItems => prevItems.filter(item => item._id !== itemId));
+  }
+
 
   useEffect(() => {
     fetch(`http://localhost:3001/myfridge`, {
@@ -47,32 +31,9 @@ function MyFridge() {
         return response.json();
       })
       .then((data) => {
-        const iconMap = {
-          faCarrot,
-          faFish,
-          faCheese,
-          faEgg,
-          faBreadSlice,
-          faAppleAlt,
-          faDrumstickBite,
-          faPepperHot,
-          faLeaf,
-          faBacon,
-          faCookie,
-          faLemon,
-          faIceCream,
-          faPizzaSlice,
-          faHamburger,
-          faHotdog,
-          faSeedling,
-          faBottleWater,
-          faWineBottle,
-          faMugHot,
-        };
-
         const itemsWithIcons = data.map((item) => ({
           ...item,
-          icon: iconMap[item.icon] || faCarrot,
+          icon: iconMap[item.icon] || iconMap.faCarrot,
         }));
 
         setFridgeItems(itemsWithIcons);
@@ -104,6 +65,7 @@ function MyFridge() {
                   handleItemSelection={handleItemSelection}
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
+                  onRemoveItem={handleRemoveItemFromList}
                 />
               </div>
             </div>

@@ -62,32 +62,35 @@ module.exports = {
 
 
     const msg = `
-        Odgovori IZKLJUČNO z veljavnim JSON array-em. Vsak objekt mora imeti lastnosti:
-        - "name" (nespremenjeno ime iz vhodnih podatkov),
-        - "icon" (najbolj ustrezna ikona iz spodnjega seznama).
+    Odgovori IZKLJUČNO z veljavnim JSON array-em (brez oznak kot so \`\`\`json ali dodatnih razlag).
 
-        DOVOLJENE IKONE (uporabi ENO izmed spodnjih):
-        [faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot]
+    Vsak objekt naj vsebuje naslednje lastnosti:
+    - "name": točno takšno kot je v vhodu (brez prevodov ali sprememb),
+    - "icon": najbolj ustrezna ikona iz DOVOLJENIH ikon spodaj (vedno ENA, brez dodajanja drugih lastnosti).
 
-        PRAVILA:
-        1. Ne spremeni imena ("name") NITI v črki — naj ostane točno tako kot je.
-        2. Ne odstrani lastnosti kot so "quantity", "unit", "addedOn", če obstajajo.
-        3. Odstrani vse, kar ni užitna sestavina (npr. osebe, države, neživilski predmeti, znamke ipd.).
-           - Primeri, ki jih MORAŠ ODSTRANITI: truplo, Slovenija, Andrejc, kamen, papir, plastika, detergent.
-        4. Sushi kis, jušne kocke, alkohol in druge užitne sestavine MORAJO OSTATI.
-        5. Če je ista sestavina večkrat, naj ima vedno isto ikono.
-        6. Ne dodaj nobenega dodatnega besedila, razlage ali komentarjev. Samo JSON.
+    DOVOLJENE IKONE:
+    [faCarrot, faFish, faCheese, faEgg, faBreadSlice, faAppleAlt, faDrumstickBite, faPepperHot, faLeaf, faBacon, faCookie, faLemon, faIceCream, faPizzaSlice, faHamburger, faHotdog, faSeedling, faBottleWater, faWineBottle, faMugHot]
 
-        Vhodni podatki:
-        ${JSON.stringify(ingredients)}
-        `;
+    PRAVILA:
+    1. Imena ("name") naj ostanejo popolnoma nespremenjena.
+    2. Ohrani vse dodatne lastnosti kot so "quantity", "unit", "addedOn", če obstajajo.
+    3. Odstrani vse neužitne artikle (npr. osebe, države, predmete kot so plastika, papir, detergent, truplo, Slovenija, Andrejc itd.).
+    4. Ne odstranjuj užitnih sestavin kot so sushi kis, jušne kocke, alkohol itd.
+    5. Če se enaka sestavina ponovi, mora vedno imeti enako ikono.
+    6. Ne dodaj komentarjev ali dodatnih besed. Odgovori samo z JSON array-em.
+
+    Vhodni podatki:
+    ${JSON.stringify(ingredients)}
+    `;
     console.log(ingredients)
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4.1",
+        model: "gpt-4.1-mini",
         messages: [{role: "user", content: msg}],
       });
+      console.log(response.choices[0].message.content);
       ingredients = JSON.parse(response.choices[0].message.content);
+
       console.log(ingredients)
       for (const ingredient of ingredients) {
         var fridge = new FridgeModel({
@@ -119,79 +122,77 @@ module.exports = {
         error: err,
       });
     }
-
-
-    /*
-        var fridge = new FridgeModel({
-      item_name : req.body.item_name,
-      quantity : req.body.quantity,
-      addedOn : req.body.addedOn,
-      user : req.body.user
-        });
-
-        fridge.save(function (err, fridge) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when creating fridge',
-                    error: err
-                });
-            }
-
-            return res.status(201).json(fridge);
-        });
-        */
   },
 
-  /**
-   * fridgeController.update()
-   */
-  update: function (req, res) {
+  update: async function (req, res) {
     var id = req.params.id;
+    var updateData = req.body;
+    var user = req.session.userId;
 
-    FridgeModel.findOne({_id: id}, function (err, fridge) {
-      if (err) {
-        return res.status(500).json({
-          message: "Error when getting fridge",
-          error: err,
-        });
+    try {
+      
+      const updatedFridge = await FridgeModel.findOneAndUpdate(
+        {_id: id, user: user},
+        updateData,
+        {new: true}
+      );
+
+      if (!updatedFridge) {
+        return res.status(404).json({message: "Fridge item not found or unauthorized"});
       }
 
-      if (!fridge) {
-        return res.status(404).json({
-          message: "No such fridge",
-        });
-      }
-
-      fridge.item_name = req.body.item_name
-        ? req.body.item_name
-        : fridge.item_name;
-      fridge.quantity = req.body.quantity ? req.body.quantity : fridge.quantity;
-      fridge.expiration = req.body.expiration
-        ? req.body.expiration
-        : fridge.expiration;
-      fridge.barcode = req.body.barcode ? req.body.barcode : fridge.barcode;
-      fridge.addedOn = req.body.addedOn ? req.body.addedOn : fridge.addedOn;
-      fridge.user = req.body.user ? req.body.user : fridge.user;
-
-      fridge.save(function (err, fridge) {
-        if (err) {
-          return res.status(500).json({
-            message: "Error when updating fridge.",
-            error: err,
-          });
-        }
-
-        return res.json(fridge);
+      return res.status(200).json(updatedFridge);
+    } catch (err) {
+      return res.status(500).json({
+        message: "Error when updating the fridge item",
+        error: err,
       });
-    });
+    }
   },
+
+  createFromBarcode: async function (req, res) {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized: no user info found' });
+    }
+
+    const ingredient = req.body;
+
+    ingredient.name =
+      String(ingredient.name).charAt(0).toUpperCase() +
+      String(ingredient.name).slice(1);
+
+    const fridge = new FridgeModel({
+      name: ingredient.name,
+      unit: ingredient.unit || '',
+      quantity: ingredient.quantity || '',
+      icon: "faBarcode",
+      expiration: ingredient.expiration || null,
+      addedOn: new Date(),
+      user: userId,
+    });
+
+    await fridge.save();
+
+    return res.status(201).json({ message: "Ingredient added successfully" });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: err.message || err,
+      error: err,
+    });
+  }
+}
+,
+
 
   /**
    * fridgeController.remove()
    */
   remove: function (req, res) {
     var id = req.params.id;
-
     FridgeModel.findByIdAndRemove(id, function (err, fridge) {
       if (err) {
         return res.status(500).json({
@@ -203,4 +204,23 @@ module.exports = {
       return res.status(204).json();
     });
   },
+
+  deleteMultipleItems: function(req, res) {
+  const ids = req.body.ids;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No IDs provided for deletion." });
+  }
+
+  FridgeModel.deleteMany({ _id: { $in: ids } }, function(err) {
+    if (err) {
+      return res.status(500).json({
+        message: "Error when deleting multiple items.",
+        error: err,
+      });
+    }
+    return res.status(204).json();
+  });
+},
+
 };

@@ -40,10 +40,11 @@ function Profile(){
                             <hr />
                             <div className="d-flex gap-3 mt-3">
                                 <button className="btn btn-lg btn-block shadow w-50"  style={{backgroundColor: "#b0d16b", color: "#FFFFFF"}}
-                                        onClick={() => navigate("/Fridge")}>
+                                        onClick={() => navigate("/MyFridge")}>
                                     Moj hladilnik
                                 </button>
-                                <button className="btn btn-lg btn-block shadow w-50"  style={{backgroundColor: "#b0d16b", color: "#FFFFFF"}}>
+                                <button className="btn btn-lg btn-block shadow w-50"  style={{backgroundColor: "#b0d16b", color: "#FFFFFF"}}
+                                        onClick={() => navigate("/RecipeHistory")}>
                                     Zgodovina receptov
                                 </button>
                             </div>
