@@ -14,9 +14,6 @@ function requiresLogin(req, res, next){
     }
 }
 
-/*
- * GET
- */
 
 /*
  * GET
@@ -37,5 +34,7 @@ router.put('/:id', requiresLogin, fridgeController.update);
  * DELETE
  */
 router.delete('/:id', requiresLogin, fridgeController.remove);
+
+router.delete('/', requiresLogin, fridgeController.deleteMultipleItems);
 
 module.exports = router;

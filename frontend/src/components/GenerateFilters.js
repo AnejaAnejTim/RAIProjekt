@@ -5,7 +5,6 @@ function GenerateFilters({ onFilterChange }) {
     const [canUseOtherIngredients, setCanUseOtherIngredients] = useState(false);
 
     useEffect(() => {
-        // Make sure to pass individual updates instead of the whole object
         onFilterChange('mealType', selectedMealType);
         onFilterChange('canUseOtherIngredients', canUseOtherIngredients);
     }, [selectedMealType, canUseOtherIngredients, onFilterChange]);
