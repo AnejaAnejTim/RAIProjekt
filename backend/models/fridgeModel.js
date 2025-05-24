@@ -6,10 +6,6 @@ var fridgeSchema = new Schema({
 	'quantity' : Number,
 	'unit': String,
 	'expiration' : Date,
-	'barcode' : {
-	 	type: Schema.Types.ObjectId,
-	 	ref: 'barcode'
-	},
 	'addedOn' : Date,
 	'icon' : String,
 	'user' : {

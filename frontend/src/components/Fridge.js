@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react"; // Added useEffect
 import { UserContext } from "../userContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,8 +14,9 @@ import { Link } from "react-router-dom";
 function Fridge() {
   const userContext = useContext(UserContext);
   const [showMenu, setShowMenu] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]); // now contains IDs
   const [foodItems, setFoodItems] = useState([]);
+
   if (!userContext.user) return <Navigate replace to="/login" />;
 
   useEffect(() => {
@@ -23,9 +24,7 @@ function Fridge() {
       credentials: "include",
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Unauthorized or other server error");
-        }
+        if (!response.ok) throw new Error("Unauthorized or server error");
         return response.json();
       })
       .then((data) => {
@@ -39,110 +38,67 @@ function Fridge() {
 
         const itemsWithIcons = data.map((item) => ({
           ...item,
-          icon: iconMap[item.name] || faCarrot, // Default icon fallback
+          icon: iconMap[item.name] || faCarrot,
         }));
 
         setFoodItems(itemsWithIcons);
       })
-
       .catch((error) => console.error("Error fetching fridge:", error));
   }, []);
 
-  const handleItemSelection = (itemName) => {
-    setSelectedItems((prevItems) => {
-      if (prevItems.includes(itemName)) {
-        return prevItems.filter((item) => item !== itemName);
-      } else {
-        return [...prevItems, itemName];
-      }
-    });
+  const handleItemSelection = (itemId) => {
+    setSelectedItems((prev) =>
+      prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+    );
   };
 
   return (
     <div className="position-relative">
-      <div className="row d-flex justify-content-center align-items-center h-100">
-        <div className="col col-xl-10">
-          <div className="row g-0">
-            <div className="col-12">
-              <div
-                style={{
-                  textAlign: "center",
-                  marginBottom: "10px",
-                  fontSize: "2rem",
-                  color: "#333",
-                }}
-              >
-                Moj hladilnik
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginBottom: "10px",
-                    fontSize: "1rem",
-                    color: "#333",
-                  }}
-                >
-                  Izberi sestavine
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateRows: "repeat(4, 1fr)",
-                  gridTemplateColumns: "repeat(4, 1fr)",
-                  gap: "25px",
-                  padding: "5px",
-                  justifyItems: "center",
-                  alignItems: "center",
-                }}
-              >
-                {foodItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      backgroundColor: selectedItems.includes(item.name)
-                        ? "#b0d16b"
-                        : "rgba(255, 255, 255, 0.5)",
-                      padding: "5px",
-                      borderRadius: "5px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                      width: "90%",
-                      height: "100%",
-                      marginBottom: "10px",
-                      marginTop: "10px",
-                    }}
-                    onClick={() => handleItemSelection(item.name)}
-                  >
-                    <FontAwesomeIcon
-                      icon={item.icon}
-                      style={{
-                        fontSize: "50px",
-                        marginBottom: "2px",
-                      }}
-                    />
-                    <span style={{ fontSize: "0.9rem" }}>{item.name}</span>
-                    <input
-                      type="checkbox"
-                      checked={selectedItems.includes(item.name)}
-                      onChange={() => handleItemSelection(item.name)}
-                      style={{
-                        position: "absolute",
-                        opacity: 0,
-                        pointerEvents: "none",
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+      {/* ... title and layout ... */}
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateRows: "repeat(4, 1fr)",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "25px",
+          padding: "5px",
+          justifyItems: "center",
+          alignItems: "center",
+        }}
+      >
+        {foodItems.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              backgroundColor: selectedItems.includes(item.id)
+                ? "#b0d16b"
+                : "rgba(255, 255, 255, 0.5)",
+              padding: "5px",
+              borderRadius: "5px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+              width: "90%",
+              height: "100%",
+              marginBottom: "10px",
+              marginTop: "10px",
+            }}
+            onClick={() => handleItemSelection(item.id)}
+          >
+            <FontAwesomeIcon
+              icon={item.icon}
+              style={{ fontSize: "50px", marginBottom: "2px" }}
+            />
+            <span style={{ fontSize: "0.9rem" }}>{item.name}</span>
           </div>
-        </div>
+        ))}
       </div>
 
+      {/* Basket / selected ingredients list */}
       <div
         style={{
           position: "fixed",
@@ -179,11 +135,14 @@ function Fridge() {
               Seznam sestavin
             </div>
             {selectedItems.length > 0 ? (
-              selectedItems.map((item, idx) => (
-                <div key={idx} className="mb-2">
-                  {item}
-                </div>
-              ))
+              selectedItems.map((id) => {
+                const item = foodItems.find((item) => item.id === id);
+                return (
+                  <div key={id} className="mb-2">
+                    {item ? item.name : "Neznana sestavina"}
+                  </div>
+                );
+              })
             ) : (
               <div className="mb-2">Ni izbranih sestavin.</div>
             )}
@@ -194,14 +153,10 @@ function Fridge() {
           <img
             src="/basket.png"
             alt="Basket"
-            style={{
-              width: "100px",
-              height: "100px",
-              cursor: "pointer",
-            }}
+            style={{ width: "100px", height: "100px", cursor: "pointer" }}
             onClick={() => setShowMenu(!showMenu)}
           />
-          {!showMenu && (
+          {!showMenu && selectedItems.length > 0 && (
             <div
               style={{
                 position: "absolute",
@@ -224,6 +179,7 @@ function Fridge() {
           )}
         </div>
       </div>
+
       <div
         style={{
           position: "fixed",
@@ -244,14 +200,7 @@ function Fridge() {
         <span style={{ fontSize: "1rem", color: "white", marginRight: "10px" }}>
           Generiraj recept
         </span>
-        <img
-          src="/generiraj-white.svg"
-          alt="Generiraj"
-          style={{
-            width: "30px",
-            height: "30px",
-          }}
-        />
+        <img src="/generiraj-white.svg" alt="Generiraj" style={{ width: "30px", height: "30px" }} />
       </div>
     </div>
   );
