@@ -206,7 +206,7 @@ module.exports = {
   },
 
   deleteMultipleItems: function(req, res) {
-  const ids = req.body.ids; // expecting { ids: [id1, id2, ...] }
+  const ids = req.body.ids;
 
   if (!Array.isArray(ids) || ids.length === 0) {
     return res.status(400).json({ message: "No IDs provided for deletion." });

@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../userContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import generateIcon from "../assets/generiraj-white.svg";
 
 import IngredientsGenerate from "./IngredientsGenerate";
@@ -10,6 +10,7 @@ import iconMap from "../utils/iconMap";
 
 function GenerateShow() {
   const userContext = useContext(UserContext);
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,8 +35,6 @@ function GenerateShow() {
       })
       .catch((error) => console.error("Error fetching fridge:", error));
   }, []);
-
-  if (!userContext.user) return <Navigate replace to="/login" />;
 
   const filteredItems = foodItems.filter((item) =>
     item.name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -73,7 +72,11 @@ function GenerateShow() {
 
       if (!response.ok) throw new Error("Error generating recipe");
       const result = await response.json();
-      // TODO: Handle `result` or navigate to a result page
+
+      const newRecipeId = result._id || result.id;
+      if (newRecipeId) {
+        navigate(`/recipe/${newRecipeId}`);
+      }
 
     } catch (error) {
       console.error("Error during recipe generation:", error);

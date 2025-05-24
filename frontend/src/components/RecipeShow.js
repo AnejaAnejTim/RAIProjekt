@@ -1,82 +1,139 @@
-import React, {useContext, useState} from 'react';
-import DifficultyIcon from '../assets/weight.svg';
+import React, { useContext, useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';  // <-- import useNavigate
 import TimeIcon from '../assets/time.svg';
-import {UserContext} from '../userContext';
+import { UserContext } from '../userContext';
 import RecipeEditForm from './RecipeEditForm';
 
-function RecipeShow({recipe}) {
-  const placeholderRecipe = {
-    name: "Špageti z omako",
-    difficulty: "Srednja",
-    prepTime: "30 min",
-    ingredients: [
-      "200g špagetov",
-      "2 žlici olivnega olja",
-      "1 strok česna",
-      "400g pelatov (paradižnik v konzervi)",
-      "Sol, poper, origano",
-      "Nariban parmezan"
-    ],
-    instructions: [
-      "Skuhajte špagete v slani vodi do al dente.",
-      "V ponvi segrejte olje in dodajte sesekljan česen.",
-      "Dodajte pelate, začimbe in kuhajte 15 minut.",
-      "Odcejene špagete zmešajte z omako.",
-      "Postrezite s parmezanom na vrhu."
-    ],
-    image: "https://www.themealdb.com/images/media/meals/sutysw1468247559.jpg",
-    authorId: "test-user-id"
-  };
+function RecipeShow() {
+  const { id } = useParams();
+  const navigate = useNavigate();  // <-- initialize navigate
+  const { user } = useContext(UserContext);
 
-  const {user} = useContext(UserContext);
-  const [currentRecipe, setCurrentRecipe] = useState(recipe || placeholderRecipe);
+  const [currentRecipe, setCurrentRecipe] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const {name, difficulty, prepTime, ingredients, instructions, image, authorId} = currentRecipe;
-  const isOwner = true;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    fetch(`http://localhost:3001/recipes/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Napaka pri nalaganju recepta');
+        return res.json();
+      })
+      .then(data => {
+        if (data.ingredients && !Array.isArray(data.ingredients)) {
+          if (typeof data.ingredients === 'string') {
+            data.ingredients = data.ingredients
+              .split(',')
+              .map(i => i.trim())
+              .filter(i => i.length > 0);
+          } else {
+            data.ingredients = [];
+          }
+        }
+
+        setCurrentRecipe(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [id]);
 
   const startEditing = () => setIsEditing(true);
   const cancelEditing = () => setIsEditing(false);
 
   const saveRecipe = (updatedRecipe) => {
-    setCurrentRecipe(updatedRecipe);
-    setIsEditing(false);
+    fetch(`http://localhost:3001/recipes/${updatedRecipe._id}`, {
+      method: 'PUT',  // or PATCH depending on your API
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedRecipe),
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Napaka pri shranjevanju recepta');
+        return res.json();
+      })
+      .then(data => {
+        setCurrentRecipe(data);
+        setIsEditing(false);
+      })
+      .catch(err => {
+        alert(err.message);
+      });
   };
 
-  // Funkcija za prikazovanje navodil - podpira tako array kot HTML string
+  // New delete handler:
+  const onDelete = () => {
+    if (!window.confirm('Ste prepričani, da želite izbrisati ta recept?')) {
+      return;
+    }
+
+    fetch(`http://localhost:3001/recipes/${id}`, {
+      method: 'DELETE',
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Napaka pri brisanju recepta');
+        return res.json().catch(() => null);
+      })
+      .then(() => {
+        navigate('/recipes');
+      })
+      .catch(err => {
+        alert(err.message);
+      });
+  };
+
+
   const renderInstructions = () => {
-    if (Array.isArray(instructions)) {
-      // Če so navodila array, jih prikažemo kot oštevilčen seznam
+    if (!currentRecipe) return null;
+
+    const instructionsText = currentRecipe.description || '';
+
+    if (typeof instructionsText === 'string' && instructionsText.trim().length > 0) {
+      const bulletPoints = instructionsText
+        .split('.')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
       return (
-        <ol style={{paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6'}}>
-          {instructions.map((instruction, idx) => (
-            <li key={idx} style={{marginBottom: '10px'}}>
-              {instruction}
+        <ol style={{ paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6' }}>
+          {bulletPoints.map((point, idx) => (
+            <li key={idx} style={{ marginBottom: '28px' }}>
+              {point}.
             </li>
           ))}
         </ol>
       );
-    } else if (typeof instructions === 'string') {
-      // Če so navodila HTML string (iz ReactQuill), uporabimo dangerouslySetInnerHTML
-      return (
-        <div
-          dangerouslySetInnerHTML={{__html: instructions}}
-          style={{paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6'}}
-        />
-      );
     } else {
-      return <p style={{paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6'}}>Navodila niso na voljo.</p>;
+      return <p style={{ paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6' }}>Navodila niso na voljo.</p>;
     }
   };
 
-  if (isEditing) {
-    return (
-      <RecipeEditForm
-        recipe={currentRecipe}
-        onSave={saveRecipe}
-        onCancel={cancelEditing}
-      />
-    );
+  if (loading) {
+    return <p style={{ textAlign: 'center', marginTop: '50px' }}>Nalaganje recepta...</p>;
   }
+
+  if (error) {
+    return <p style={{ color: 'red', textAlign: 'center', marginTop: '50px' }}>{error}</p>;
+  }
+
+  if (!currentRecipe) {
+    return <p style={{ textAlign: 'center', marginTop: '50px' }}>Recept ni bil najden.</p>;
+  }
+
+  const {
+    title,
+    prep_time,
+    cook_time,
+    ingredients = [],
+    image,
+    user: author,
+  } = currentRecipe;
+
+  const isOwner = user?._id === author?._id || user?.id === author;
 
   return (
     <div
@@ -91,10 +148,10 @@ function RecipeShow({recipe}) {
       }}
     >
       {image && (
-        <div style={{width: '100%', overflow: 'hidden'}}>
+        <div style={{ width: '100%', overflow: 'hidden' }}>
           <img
             src={image}
-            alt={name}
+            alt={title}
             style={{
               width: '100%',
               maxHeight: '300px',
@@ -108,18 +165,31 @@ function RecipeShow({recipe}) {
         </div>
       )}
 
-      <div style={{padding: '25px 30px'}}>
+      <div style={{ padding: '25px 30px' }}>
         <h2
           style={{
             textAlign: 'center',
-            marginBottom: '15px',
+            marginBottom: '5px',
             fontSize: '2.5rem',
             color: '#333',
             textShadow: '1px 1px 2px rgba(74, 124, 37, 0.4)',
           }}
         >
-          {name}
+          {title}
         </h2>
+        {author?.username && (
+          <p
+            style={{
+              textAlign: 'center',
+              fontSize: '1.1rem',
+              fontWeight: '500',
+              color: '#666',
+              marginBottom: '20px',
+            }}
+          >
+            Avtor: {author.username}
+          </p>
+        )}
 
         <div
           style={{
@@ -135,35 +205,52 @@ function RecipeShow({recipe}) {
             boxShadow: '0 2px 6px rgba(74, 124, 37, 0.15)',
           }}
         >
-          <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-            <img src={DifficultyIcon} alt="difficulty icon" style={{width: '20px', height: '20px'}}/>
-            <span>Zahtevnost: {difficulty}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img src={TimeIcon} alt="time icon" style={{ width: '20px', height: '20px' }} />
+            <span>Čas priprave: {prep_time || 'N/A'}</span>
           </div>
-          <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-            <img src={TimeIcon} alt="time icon" style={{width: '20px', height: '20px'}}/>
-            <span>Čas priprave: {prepTime}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img src={TimeIcon} alt="cook time icon" style={{ width: '20px', height: '20px' }} />
+            <span>Čas kuhanja: {cook_time || 'N/A'}</span>
           </div>
         </div>
 
-        <section style={{marginBottom: '30px'}}>
-          <h3>
-            Sestavine
-          </h3>
-          <hr></hr>
-          <ul style={{paddingLeft: '20px'}}>
-            {ingredients.map((item, idx) => (
-              <li key={idx} style={{fontSize: '1.1rem', marginBottom: '10px', lineHeight: '1.5'}}>{item}</li>
-            ))}
+        <section style={{ marginBottom: '30px' }}>
+          <h3>Sestavine</h3>
+          <hr />
+          <ul style={{ paddingLeft: '20px' }}>
+            {Array.isArray(ingredients)
+              ? ingredients.map((item, idx) => (
+                  <li key={idx} style={{ fontSize: '1.1rem', marginBottom: '10px', lineHeight: '1.5' }}>
+                    {item}
+                  </li>
+                ))
+              : (
+                <li style={{ fontSize: '1.1rem', marginBottom: '10px', lineHeight: '1.5' }}>
+                  {ingredients || 'Sestavine niso na voljo.'}
+                </li>
+              )
+            }
           </ul>
         </section>
-        <hr></hr>
+
+        <hr />
+
         <section>
           <h3>Navodila</h3>
           {renderInstructions()}
         </section>
 
-        {isOwner && (
-          <div style={{display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px'}}>
+        {isEditing && (
+          <RecipeEditForm
+            recipe={currentRecipe}
+            onCancel={cancelEditing}
+            onSave={saveRecipe}
+          />
+        )}
+
+        {isOwner && !isEditing && (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px' }}>
             <button
               onClick={startEditing}
               style={{
@@ -172,19 +259,20 @@ function RecipeShow({recipe}) {
                 color: '#fff',
                 border: 'none',
                 borderRadius: '8px',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Uredi
             </button>
             <button
+              onClick={onDelete}
               style={{
                 padding: '10px 20px',
                 backgroundColor: '#e84138',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '8px',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Izbriši
