@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFire, faRobot, faUtensils } from '@fortawesome/free-solid-svg-icons'; // faUtensils za "Vsi recepti"
+import {useState, useRef} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faFire, faRobot, faUtensils} from '@fortawesome/free-solid-svg-icons'; // faUtensils za "Vsi recepti"
 import TrendingRecipesShow from './TrendingRecipesShow';
 
 function Index() {
@@ -16,7 +16,7 @@ function Index() {
       description: 'Odkrij najbolj priljubljene AI-generirane recepte ta teden!',
       onClick: () => {
         if (trendingRef.current) {
-          trendingRef.current.scrollIntoView({ behavior: 'smooth' });
+          trendingRef.current.scrollIntoView({behavior: 'smooth'});
         }
       }
     },
@@ -39,11 +39,11 @@ function Index() {
   ];
 
   return (
-    <div style={{ padding: '30px 10%', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '20px', textAlign: 'center' }}>
-        Dobrodošli na <span style={{ color: '#b0d16b' }}>YummyAI</span>
+    <div style={{padding: '30px 10%', fontFamily: 'sans-serif'}}>
+      <h1 style={{fontSize: '2.5rem', marginBottom: '20px', textAlign: 'center'}}>
+        Dobrodošli na <span style={{color: '#b0d16b'}}>YummyAI</span>
       </h1>
-      <p style={{ fontSize: '1.2rem', textAlign: 'center', marginBottom: '40px' }}>
+      <p style={{fontSize: '1.2rem', textAlign: 'center', marginBottom: '40px'}}>
         Ustvarjaj in deli AI-generirane recepte s skupnostjo.
       </p>
 
@@ -73,18 +73,18 @@ function Index() {
                 transition: 'transform 0.2s ease',
               }}
             >
-              <FontAwesomeIcon icon={section.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#b0d16b' }} />
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>{section.title}</h2>
-              <p style={{ fontSize: '1rem', color: '#555' }}>{section.description}</p>
+              <FontAwesomeIcon icon={section.icon} style={{fontSize: '40px', marginBottom: '15px', color: '#b0d16b'}}/>
+              <h2 style={{fontSize: '1.5rem', marginBottom: '10px'}}>{section.title}</h2>
+              <p style={{fontSize: '1rem', color: '#555'}}>{section.description}</p>
             </div>
           );
         })}
       </div>
 
-      <hr style={{ margin: '60px 0' }} />
+      <hr style={{margin: '60px 0'}}/>
 
       <div ref={trendingRef}>
-        <TrendingRecipesShow />
+        <TrendingRecipesShow/>
       </div>
     </div>
   );

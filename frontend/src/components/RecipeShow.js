@@ -1,16 +1,10 @@
-import React, { useContext, createContext } from 'react';
+import React, {useContext, useState} from 'react';
 import DifficultyIcon from '../assets/weight.svg';
 import TimeIcon from '../assets/time.svg';
+import {UserContext} from '../userContext';
+import RecipeEditForm from './RecipeEditForm';
 
-export const UserContext = createContext({
-  user: {
-    id: "test-user-id",
-    username: "testuser",
-    email: "test@example.com",
-  },
-});
-
-function RecipeShow({ recipe }) {
+function RecipeShow({recipe}) {
   const placeholderRecipe = {
     name: "Špageti z omako",
     difficulty: "Srednja",
@@ -31,14 +25,58 @@ function RecipeShow({ recipe }) {
       "Postrezite s parmezanom na vrhu."
     ],
     image: "https://www.themealdb.com/images/media/meals/sutysw1468247559.jpg",
-    authorId: "test-user-id" // ⬅️ pomembno
+    authorId: "test-user-id"
   };
 
-  const currentRecipe = recipe || placeholderRecipe;
-  const { name, difficulty, prepTime, ingredients, instructions, image, authorId } = currentRecipe;
+  const {user} = useContext(UserContext);
+  const [currentRecipe, setCurrentRecipe] = useState(recipe || placeholderRecipe);
+  const [isEditing, setIsEditing] = useState(false);
+  const {name, difficulty, prepTime, ingredients, instructions, image, authorId} = currentRecipe;
+  const isOwner = true;
 
-  const { user } = useContext(UserContext);
-  const isOwner = user && user.id === authorId;
+  const startEditing = () => setIsEditing(true);
+  const cancelEditing = () => setIsEditing(false);
+
+  const saveRecipe = (updatedRecipe) => {
+    setCurrentRecipe(updatedRecipe);
+    setIsEditing(false);
+  };
+
+  // Funkcija za prikazovanje navodil - podpira tako array kot HTML string
+  const renderInstructions = () => {
+    if (Array.isArray(instructions)) {
+      // Če so navodila array, jih prikažemo kot oštevilčen seznam
+      return (
+        <ol style={{paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6'}}>
+          {instructions.map((instruction, idx) => (
+            <li key={idx} style={{marginBottom: '10px'}}>
+              {instruction}
+            </li>
+          ))}
+        </ol>
+      );
+    } else if (typeof instructions === 'string') {
+      // Če so navodila HTML string (iz ReactQuill), uporabimo dangerouslySetInnerHTML
+      return (
+        <div
+          dangerouslySetInnerHTML={{__html: instructions}}
+          style={{paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6'}}
+        />
+      );
+    } else {
+      return <p style={{paddingLeft: '20px', fontSize: '1.1rem', lineHeight: '1.6'}}>Navodila niso na voljo.</p>;
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <RecipeEditForm
+        recipe={currentRecipe}
+        onSave={saveRecipe}
+        onCancel={cancelEditing}
+      />
+    );
+  }
 
   return (
     <div
@@ -53,7 +91,7 @@ function RecipeShow({ recipe }) {
       }}
     >
       {image && (
-        <div style={{ width: '100%', overflow: 'hidden' }}>
+        <div style={{width: '100%', overflow: 'hidden'}}>
           <img
             src={image}
             alt={name}
@@ -70,7 +108,7 @@ function RecipeShow({ recipe }) {
         </div>
       )}
 
-      <div style={{ padding: '25px 30px' }}>
+      <div style={{padding: '25px 30px'}}>
         <h2
           style={{
             textAlign: 'center',
@@ -97,58 +135,58 @@ function RecipeShow({ recipe }) {
             boxShadow: '0 2px 6px rgba(74, 124, 37, 0.15)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src={DifficultyIcon} alt="difficulty icon" style={{ width: '20px', height: '20px' }} />
+          <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <img src={DifficultyIcon} alt="difficulty icon" style={{width: '20px', height: '20px'}}/>
             <span>Zahtevnost: {difficulty}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src={TimeIcon} alt="time icon" style={{ width: '20px', height: '20px' }} />
+          <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <img src={TimeIcon} alt="time icon" style={{width: '20px', height: '20px'}}/>
             <span>Čas priprave: {prepTime}</span>
           </div>
         </div>
 
-        <section style={{ marginBottom: '30px' }}>
-          <h3 style={{ fontSize: '1.5rem', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '15px' }}>
+        <section style={{marginBottom: '30px'}}>
+          <h3>
             Sestavine
           </h3>
-          <ul style={{ paddingLeft: '20px' }}>
+          <hr></hr>
+          <ul style={{paddingLeft: '20px'}}>
             {ingredients.map((item, idx) => (
-              <li key={idx} style={{ fontSize: '1.1rem', marginBottom: '10px', lineHeight: '1.5' }}>{item}</li>
+              <li key={idx} style={{fontSize: '1.1rem', marginBottom: '10px', lineHeight: '1.5'}}>{item}</li>
             ))}
           </ul>
         </section>
-
+        <hr></hr>
         <section>
-          <h3 style={{ fontSize: '1.5rem', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '15px' }}>
-            Navodila
-          </h3>
-          <ol style={{ paddingLeft: '20px' }}>
-            {instructions.map((step, idx) => (
-              <li key={idx} style={{ fontSize: '1.1rem', marginBottom: '15px', lineHeight: '1.6' }}>{step}</li>
-            ))}
-          </ol>
+          <h3>Navodila</h3>
+          {renderInstructions()}
         </section>
 
         {isOwner && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px' }}>
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: '#b0d16b',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}>
+          <div style={{display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px'}}>
+            <button
+              onClick={startEditing}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#b0d16b',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}
+            >
               Uredi
             </button>
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: '#e84138',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}>
+            <button
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#e84138',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}
+            >
               Izbriši
             </button>
           </div>
@@ -158,18 +196,4 @@ function RecipeShow({ recipe }) {
   );
 }
 
-function RecipeShowWithUser() {
-  const testUser = {
-    id: "test-user-id",
-    username: "testuser",
-    email: "test@example.com",
-  };
-
-  return (
-    <UserContext.Provider value={{ user: testUser }}>
-      <RecipeShow />
-    </UserContext.Provider>
-  );
-}
-
-export default RecipeShowWithUser;
+export default RecipeShow;
