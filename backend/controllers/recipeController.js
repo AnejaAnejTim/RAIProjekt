@@ -81,7 +81,7 @@ module.exports = {
     - Čas priprave (npr: "10 minut")
     - Čas kuhanja (npr: "20 minut")
     - Sestavine (v enem nizu, npr: "jajca 2 kosa, mleko 150 ml, sol 1/2 čajne žličke")
-    - Navodila (v oštevilčenih korakih)
+    - Navodila (ločena s piko)
 
     Sestavine:
     ${ingredients.map(i => `${i.name} ${i.quantity} ${i.unit}`).join(", ")}
