@@ -193,7 +193,6 @@ module.exports = {
    */
   remove: function (req, res) {
     var id = req.params.id;
-
     FridgeModel.findByIdAndRemove(id, function (err, fridge) {
       if (err) {
         return res.status(500).json({
@@ -205,4 +204,23 @@ module.exports = {
       return res.status(204).json();
     });
   },
+
+  deleteMultipleItems: function(req, res) {
+  const ids = req.body.ids; // expecting { ids: [id1, id2, ...] }
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No IDs provided for deletion." });
+  }
+
+  FridgeModel.deleteMany({ _id: { $in: ids } }, function(err) {
+    if (err) {
+      return res.status(500).json({
+        message: "Error when deleting multiple items.",
+        error: err,
+      });
+    }
+    return res.status(204).json();
+  });
+},
+
 };
