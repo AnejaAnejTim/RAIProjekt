@@ -202,6 +202,7 @@ exports.completeLogin = async (req, res) => {
             });
         }
 
+        req.session.userId = loginRequest.userId;
         pendingLogins.delete(confirmationToken);
 
         res.json({
