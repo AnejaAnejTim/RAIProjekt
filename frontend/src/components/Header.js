@@ -31,7 +31,7 @@ const Header = ({ title }) => {
                       <Link to="/generate" className="nav-link text-white text-decoration-none">Generiraj</Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/recipe" className="nav-link text-white text-decoration-none">Recept</Link>
+                      <Link to="/recipes" className="nav-link text-white text-decoration-none">Recepti</Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/profile" className="nav-link text-white text-decoration-none">Profile</Link>

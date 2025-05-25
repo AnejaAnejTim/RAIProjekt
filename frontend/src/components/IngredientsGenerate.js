@@ -93,6 +93,9 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                 }}
               />
               <span style={{ fontSize: '0.9rem' }}>{item.name}</span>
+               <div style={{ fontSize: '0.8rem', color: '#555' }}>
+                  {item.quantity} {item.unit}
+                </div>
               <input
                 type="checkbox"
                 checked={isSelected}
