@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config();
+require('./mqtt/tracker');
 
 // vključimo mongoose in ga povežemo z MongoDB
 var mongoose = require('mongoose');
@@ -20,6 +21,10 @@ var fridgeRouter = require('./routes/fridgeRoutes');
 var recipeRouter = require('./routes/recipeRoutes');
 var barcodeRouter = require('./routes/barcodeRoutes');
 var loginConfirmationRoutes = require('./routes/loginConfirmationRoutes');
+var mqttRoutes = require('./routes/mqttRoutes');
+
+
+
 var app = express();
 const cors = require('cors');
 app.use(cors({
@@ -71,6 +76,7 @@ app.use('/myfridge', fridgeRouter);
 app.use('/recipes', recipeRouter);
 app.use('/barcodes', barcodeRouter);
 app.use('/login-confirmation', loginConfirmationRoutes);
+app.use('/api', mqttRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
