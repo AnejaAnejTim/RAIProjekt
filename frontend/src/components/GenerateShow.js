@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../userContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import generateIcon from "../assets/generiraj-white.svg";
+import React, { useCallback } from 'react';
 
 import IngredientsGenerate from "./IngredientsGenerate";
 import Basket from "./Basket";
@@ -50,16 +51,20 @@ function GenerateShow() {
     );
   };
 
-  const handleFilterChange = (filterName, value) => {
-    setSelectedFilters((prev) => ({
+  const handleFilterChange = useCallback((filterName, value) => {
+  setSelectedFilters((prev) => {
+    if (prev[filterName] === value) return prev;
+    return {
       ...prev,
       [filterName]: value,
-    }));
-  };
+    };
+  });
+}, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedItems.length < 2) return;
+  
 
     try {
       setLoading(true);
@@ -107,7 +112,7 @@ function GenerateShow() {
                 Generiraj recept
               </div>
               <div style={{ fontSize: '1.6rem' }}>
-                1. Izberite sestavine iz vašega hladilnika
+                1. Izberite sestavine iz vaÅ¡ega hladilnika
               </div>
               <IngredientsGenerate
                 foodItems={filteredItems}
@@ -143,7 +148,7 @@ function GenerateShow() {
         onClick={handleSubmit}
       >
         <span style={{ fontSize: '1rem', color: 'white', marginRight: '10px' }}>
-          Generiraj recept
+          Generiraj recept sdgkljnsdg
         </span>
         <img
           src={generateIcon}
