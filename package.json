@@ -2,6 +2,8 @@
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "jsonwebtoken": "^9.0.2",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
     "react-quill": "^2.0.0"
   }
 }
