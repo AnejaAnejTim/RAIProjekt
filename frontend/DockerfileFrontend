@@ -1,0 +1,18 @@
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# Build the frontend for production
+RUN npm run build
+
+ENV NODE_ENV=production
+
+EXPOSE 3000
+
+# Start the production server
+CMD ["npm", "start"]
