@@ -1,0 +1,27 @@
+FROM node:18
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+
+# Clear npm cache and install dependencies
+RUN npm cache clean --force
+RUN npm install
+
+# Rebuild all native dependencies for the container architecture
+RUN npm rebuild
+
+COPY . .
+
+ENV NODE_ENV=production
+
+EXPOSE 3001
+
+CMD ["node", "bin/www"]
