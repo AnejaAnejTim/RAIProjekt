@@ -3,19 +3,20 @@ var router = express.Router();
 var userController = require('../controllers/userController.js');
 const auth = require('../middleware/auth');
 const loginConfirmationController = require('../controllers/loginConfirmationController');
-
-
-
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 router.get('/', userController.list);
 router.get('/register', userController.showRegister);
 router.get('/login', userController.showLogin);
 router.get('/profile', userController.profile);
 router.get('/logout', userController.logout);
 router.get('/appValidation', auth, userController.appValidation);
+
 router.get('/:id', userController.show);
+
 router.post('/login-confirmation/initiate', loginConfirmationController.initiateLogin);
 router.post('/login-confirmation/complete', loginConfirmationController.completeLogin);
-
+router.post('/userExists', userController.userExists);
 
 router.post('/', userController.create);
 router.post('/login', userController.login);
