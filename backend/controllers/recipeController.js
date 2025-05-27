@@ -28,28 +28,52 @@ module.exports = {
      * recipeController.show()
      */
     show: function (req, res) {
-    var id = req.params.id;
+        var id = req.params.id;
 
-    RecipeModel.findOne({_id: id})
-        .populate('user', 'username') 
-        .exec(function (err, recipe) {
+        RecipeModel.findOne({_id: id})
+            .populate('user', 'username') 
+            .exec(function (err, recipe) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting recipe.',
+                        error: err
+                    });
+                }
+
+                if (!recipe) {
+                    return res.status(404).json({
+                        message: 'No such recipe'
+                    });
+                }
+
+                return res.json(recipe);
+            });
+    },
+    showMyRecipes: function (req, res) {
+        const user = req.session.userId;
+
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized: No user in session." });
+        }
+
+        RecipeModel.find({ user: user }, function(err, recipes) {
             if (err) {
+                console.error("Database error:", err);
                 return res.status(500).json({
-                    message: 'Error when getting recipe.',
+                    message: 'Error when getting recipes.',
                     error: err
                 });
             }
 
-            if (!recipe) {
+            if (!recipes || recipes.length === 0) {
                 return res.status(404).json({
-                    message: 'No such recipe'
+                    message: 'No recipes found.'
                 });
             }
 
-            return res.json(recipe);
+            return res.status(200).json(recipes);
         });
-},
-
+    },
 
     /**
      * recipeController.create()
