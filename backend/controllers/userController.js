@@ -215,7 +215,7 @@ module.exports = {
             return res.status(401).json({ error: 'Invalid username or password.' });
             }
 
-            const payload = { id: user._id, username: user.username };
+            const payload = { id: user._id, username: user.username, email: user.email };
             const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
 
             return res.status(200).json({ token, user: payload });
@@ -254,6 +254,37 @@ module.exports = {
         } catch (err) {
             console.error('Unhandled error in appValidation:', err);
             return res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    userExists: async function(req, res) {
+        try {
+            const { email, username } = req.body;
+
+            if (!email && !username) {
+                return res.status(400).json({ 
+                    message: "Email or username must be provided"
+                });
+            }
+
+            const query = { 
+                $or: []
+            };
+            if (email) query.$or.push({ email });
+            if (username) query.$or.push({ username });
+
+            const user = await UserModel.findOne(query).exec();
+
+            if (user) {
+                return res.status(200).json({ exists: true });
+            } else {
+                return res.status(200).json({ exists: false });
+            }
+
+        } catch (err) {
+            return res.status(500).json({
+                message: 'Error checking user existence',
+                error: err
+            });
         }
     }
 
