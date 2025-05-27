@@ -1,13 +1,13 @@
-import {useContext, useEffect, useState} from 'react';
-import {UserContext} from '../userContext';
-import {Navigate, useNavigate} from 'react-router-dom';
-import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../userContext';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import {useMap} from 'react-leaflet';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -22,15 +22,23 @@ function Profile() {
     const [profile, setProfile] = useState({});
     const [devices, setDevices] = useState([]);
     const [selectedDevice, setSelectedDevice] = useState(null);
-    const [mapCenter, setMapCenter] = useState([46.056946, 14.505751]); // Default: Ljubljana
+    const [mapCenter, setMapCenter] = useState([46.056946, 14.505751]);
 
     const navigate = useNavigate();
+
+    useEffect(function(){
+        const getProfile = async function(){
+            const res = await fetch("http://localhost:3001/users/profile", {credentials: "include"});
+            const data = await res.json();
+            setProfile(data);
+        }
+        getProfile();
+    }, []);
 
     useEffect(() => {
         const fetchActiveDevices = async () => {
             const res = await fetch("http://localhost:3001/api/active-devices", {credentials: "include"});
             const data = await res.json();
-            // If data is an object, get its keys as device IDs
             setActiveDeviceIds(Array.isArray(data) ? data.map(d => d.deviceId) : Object.keys(data));
         };
         fetchActiveDevices();
