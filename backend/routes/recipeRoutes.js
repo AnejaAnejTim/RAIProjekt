@@ -21,10 +21,9 @@ router.get('/', recipeController.list);
 /*
  * GET
  */
+router.get('/trending', recipeController.trending);
 router.get('/myRecipes', requiresLogin, recipeController.showMyRecipes)
 router.get('/:id', recipeController.show);
-
-
 /*
  * POST
  */

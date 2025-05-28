@@ -237,5 +237,42 @@ module.exports = {
 
             return res.status(204).json();
         });
+    },
+
+    trending: async function (req, res) {
+        try {
+            const recipes = await RecipeModel.find().populate('user', 'username').lean();
+
+            const startOfDay = new Date();
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const trendingRecipes = recipes.map(recipe => {
+                const allTimeUniqueViews = new Set(
+                    (recipe.viewedBy || []).map(entry => entry.user.toString())
+                ).size;
+
+                const dailyUniqueViews = new Set(
+                    (recipe.viewedBy || [])
+                        .filter(entry => entry.date >= startOfDay)
+                        .map(entry => entry.user.toString())
+                ).size;
+
+                return {
+                    ...recipe,
+                    allTimeUniqueViews,
+                    dailyUniqueViews
+                };
+            });
+
+            trendingRecipes.sort((a, b) =>
+                b.dailyUniqueViews - a.dailyUniqueViews ||
+                b.allTimeUniqueViews - a.allTimeUniqueViews
+            );
+
+            res.json(trendingRecipes.slice(0, 6));
+        } catch (err) {
+            console.error('Trending error:', err);
+            res.status(500).json({ message: 'Error when getting trending recipes.', error: err });
+        }
     }
 };
