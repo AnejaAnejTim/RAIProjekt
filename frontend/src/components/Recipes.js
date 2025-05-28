@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faUtensils, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faStar, faUtensils, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 function Recipes() {
   const [recipes, setRecipes] = useState([]);
@@ -38,16 +38,16 @@ function Recipes() {
   });
 
   if (loading)
-    return <p style={{ textAlign: 'center', marginTop: '50px' }}>Nalaganje receptov...</p>;
+    return <p style={{textAlign: 'center', marginTop: '50px'}}>Nalaganje receptov...</p>;
 
   if (error)
-    return <p style={{ color: 'red', textAlign: 'center', marginTop: '50px' }}>{error}</p>;
+    return <p style={{color: 'red', textAlign: 'center', marginTop: '50px'}}>{error}</p>;
 
   if (recipes.length === 0)
-    return <p style={{ textAlign: 'center', marginTop: '50px' }}>Ni receptov za prikaz.</p>;
+    return <p style={{textAlign: 'center', marginTop: '50px'}}>Ni receptov za prikaz.</p>;
 
   return (
-    <div style={{ padding: '30px 10%', fontFamily: 'sans-serif' }}>
+    <div style={{padding: '30px 10%', fontFamily: 'sans-serif'}}>
       <div
         style={{
           backgroundColor: '#b0d16b',
@@ -58,31 +58,31 @@ function Recipes() {
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         }}
       >
-        <h2 style={{ fontSize: '1.8rem', color: 'white', margin: 0 }}>
+        <h2 style={{fontSize: '1.8rem', color: 'white', margin: 0}}>
           🍽️ Recepti iz baze
         </h2>
       </div>
 
-      <div style={{ marginBottom: '30px', textAlign: 'center' }}>
-         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <input
-          type="text"
-          placeholder="Iščite recept..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{
-            padding: '8px 12px',
-            borderRadius: '20px',
-            border: '1px solid #ccc',
-            width: '60%',
-            fontSize: '1rem',
-          }}
-        />
-      </div>
+      <div style={{marginBottom: '30px', textAlign: 'center'}}>
+        <div style={{textAlign: 'center', marginBottom: '30px'}}>
+          <input
+            type="text"
+            placeholder="Iščite recept..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '20px',
+              border: '1px solid #ccc',
+              width: '60%',
+              fontSize: '1rem',
+            }}
+          />
+        </div>
       </div>
 
       {filteredRecipes.length === 0 ? (
-        <p style={{ textAlign: 'center', marginTop: '20px' }}>Ni zadetkov za: "{searchTerm}"</p>
+        <p style={{textAlign: 'center', marginTop: '20px'}}>Ni zadetkov za: "{searchTerm}"</p>
       ) : (
         <div
           style={{
@@ -105,7 +105,7 @@ function Recipes() {
                 to={`/recipe/${recipe._id}`}
                 onMouseEnter={() => setHoveredRecipe(recipe._id)}
                 onMouseLeave={() => setHoveredRecipe(null)}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+                style={{textDecoration: 'none', color: 'inherit'}}
               >
                 <div
                   style={{
@@ -142,7 +142,7 @@ function Recipes() {
                       color: '#84c318',
                     }}
                   />
-                  <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
+                  <h3 style={{fontSize: '1.2rem', marginBottom: '8px'}}>
                     {recipe.title}
                   </h3>
                   <p
@@ -155,8 +155,8 @@ function Recipes() {
                   >
                     {shortDesc}
                   </p>
-                  <div style={{ fontSize: '1rem', color: '#f39c12' }}>
-                    <FontAwesomeIcon icon={faStar} /> {fakeRating.toFixed(2)} / 5
+                  <div style={{fontSize: '1rem', color: '#f39c12'}}>
+                    <FontAwesomeIcon icon={faStar}/> {fakeRating.toFixed(2)} / 5
                   </div>
                 </div>
               </Link>
