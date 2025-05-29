@@ -44,15 +44,27 @@ function Profile() {
 
     useEffect(() => {
         const getDevices = async () => {
-            const res = await fetch("http://localhost:3001/api/my-latest-locations", {credentials: "include"});
-            const data = await res.json();
-            setDevices(data);
-            if (data.length > 0) {
-                setSelectedDevice(data[0]);
-                setMapCenter([data[0].latitude, data[0].longitude]);
+            try {
+                const res = await fetch("http://localhost:3001/api/my-latest-locations", {credentials: "include"});
+                const data = await res.json();
+                setDevices(data);
+                if (data.length > 0) {
+                    setSelectedDevice(prev => {
+                        const stillExists = data.find(d => d.deviceId === prev?.deviceId);
+                        return stillExists ? prev : data[0];
+                    });
+                    setMapCenter([data[0].latitude, data[0].longitude]);
+                }
+            } catch (error) {
+                console.error("Napaka pri osveževanju naprav:", error);
             }
         };
+
         getDevices();
+
+        const intervalId = setInterval(getDevices, 5000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     function ChangeMapView({center, zoom}) {
