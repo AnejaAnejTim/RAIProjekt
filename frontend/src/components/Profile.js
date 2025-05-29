@@ -35,11 +35,18 @@ function Profile() {
 
     useEffect(() => {
         const fetchActiveDevices = async () => {
-            const res = await fetch("http://localhost:3001/api/active-devices", {credentials: "include"});
-            const data = await res.json();
-            setActiveDeviceIds(Array.isArray(data) ? data.map(d => d.deviceId) : Object.keys(data));
+            try {
+                const res = await fetch("http://localhost:3001/api/active-devices", {credentials: "include"});
+                const data = await res.json();
+                setActiveDeviceIds(data.devices || []);
+            } catch (err) {
+                console.error("Napaka pri pridobivanju aktivnih naprav:", err);
+            }
         };
+
         fetchActiveDevices();
+        const intervalId = setInterval(fetchActiveDevices, 5000);
+        return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {
@@ -47,12 +54,20 @@ function Profile() {
             try {
                 const res = await fetch("http://localhost:3001/api/my-latest-locations", {credentials: "include"});
                 const data = await res.json();
-                setDevices(data);
+
+                setDevices(prevDevices => {
+                    const dataMap = new Map(data.map(d => [d.deviceId, d]));
+                    const ordered = prevDevices.map(d => dataMap.get(d.deviceId)).filter(Boolean);
+                    const newDevices = data.filter(d => !prevDevices.some(p => p.deviceId === d.deviceId));
+                    return [...ordered, ...newDevices];
+                });
+
+                setSelectedDevice(prev => {
+                    const found = data.find(d => d.deviceId === prev?.deviceId);
+                    return found ? found : data[0] || null;
+                });
+
                 if (data.length > 0) {
-                    setSelectedDevice(prev => {
-                        const stillExists = data.find(d => d.deviceId === prev?.deviceId);
-                        return stillExists ? prev : data[0];
-                    });
                     setMapCenter([data[0].latitude, data[0].longitude]);
                 }
             } catch (error) {
@@ -61,9 +76,7 @@ function Profile() {
         };
 
         getDevices();
-
         const intervalId = setInterval(getDevices, 5000);
-
         return () => clearInterval(intervalId);
     }, []);
 
@@ -128,8 +141,9 @@ function Profile() {
                                                     className="list-group-item"
                                                     style={{
                                                         cursor: 'pointer',
-                                                        fontWeight: isActive ? 'bold' : 'normal',
+                                                        fontWeight: 'normal',
                                                         backgroundColor: isSelected ? '#e4f4c2' : 'white',
+                                                        color: isActive ? 'inherit' : '#6c757d',
                                                         transform: isSelected ? 'scale(1.02)' : 'scale(1)',
                                                         transition: 'all 0.2s ease-in-out',
                                                         boxShadow: isSelected ? '0 0 10px rgba(176, 209, 107, 0.6)' : 'none',
@@ -138,8 +152,11 @@ function Profile() {
                                                     onClick={() => handleDeviceClick(device)}
                                                 >
                                                     {device.deviceId}
-                                                    {isActive && (
-                                                        <span style={{color: '#b0d16b', marginLeft: 8}}>Connected</span>
+                                                    <br/>
+                                                    {isActive ? (
+                                                        <span style={{color: '#b0d16b'}}>Connected</span>
+                                                    ) : (
+                                                        <span style={{color: '#adb5bd'}}>Disconnected</span>
                                                     )}
                                                     <br/>
                                                     <small>{new Date(device.timestamp).toLocaleString()}</small>
