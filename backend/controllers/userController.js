@@ -29,36 +29,35 @@ module.exports = {
      * userController.show()
      */
     show: function (req, res) {
-    var id = req.params.id;
+        var id = req.params.id;
+        UserModel.findOne({_id: id})
+            .populate('postedBy') 
+            .exec(function (err, user) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting user.',
+                        error: err
+                    });
+                }
 
-    UserModel.findOne({ _id: id })
-        .populate('postedBy') 
-        .exec(function (err, user) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when getting user.',
-                    error: err
-                });
-            }
-
-            if (!user) {
-                return res.status(404).json({
-                    message: 'No such user'
-                });
-            }
-            return res.json(user);
-        });
-    },    
+                if (!user) {
+                    return res.status(404).json({
+                        message: 'No such user'
+                    });
+                }
+                return res.json(user);
+            });
+    },
 
     /**
      * userController.create()
      */
     create: function (req, res) {
-        
+
         UserModel.findOne({
             $or: [
-                { email: req.body.email },
-                { username: req.body.username }
+                {email: req.body.email},
+                {username: req.body.username}
             ]
         }, function (err, existingUser) {
             if (err) {
@@ -120,8 +119,8 @@ module.exports = {
             }
 
             user.username = req.body.username ? req.body.username : user.username;
-			user.password = req.body.password ? req.body.password : user.password;
-			user.email = req.body.email ? req.body.email : user.email;
+            user.password = req.body.password ? req.body.password : user.password;
+            user.email = req.body.email ? req.body.email : user.email;
 
             user.save(function (err, user) {
                 if (err) {
@@ -154,17 +153,17 @@ module.exports = {
         });
     },
 
-    showRegister: function(req, res){
+    showRegister: function (req, res) {
         res.render('user/register');
     },
 
-    showLogin: function(req, res){
+    showLogin: function (req, res) {
         res.render('user/login');
     },
 
-    login: function(req, res, next){
-        UserModel.authenticate(req.body.username, req.body.password, function(err, user){
-            if(err || !user){
+    login: function (req, res, next) {
+        UserModel.authenticate(req.body.username, req.body.password, function (err, user) {
+            if (err || !user) {
                 var err = new Error('Wrong username or paassword');
                 err.status = 401;
                 return next(err);
@@ -173,30 +172,30 @@ module.exports = {
         });
     },
 
-    profile: function(req, res,next){
+    profile: function (req, res, next) {
         UserModel.findById(req.session.userId)
-        .exec(function(error, user){
-            if(error){
-                return next(error);
-            } else{
-                if(user===null){
-                    var err = new Error('Not authorized, go back!');
-                    err.status = 400;
-                    return next(err);
-                } else{
-                    //return res.render('user/profile', user);
-                    return res.json(user);
+            .exec(function (error, user) {
+                if (error) {
+                    return next(error);
+                } else {
+                    if (user === null) {
+                        var err = new Error('Not authorized, go back!');
+                        err.status = 400;
+                        return next(err);
+                    } else {
+                        //return res.render('user/profile', user);
+                        return res.json(user);
+                    }
                 }
-            }
-        });
+            });
     },
 
-    logout: function(req, res, next){
-        if(req.session){
-            req.session.destroy(function(err){
-                if(err){
+    logout: function (req, res, next) {
+        if (req.session) {
+            req.session.destroy(function (err) {
+                if (err) {
                     return next(err);
-                } else{
+                } else {
                     //return res.redirect('/');
                     return res.status(201).json({});
                 }
@@ -204,28 +203,28 @@ module.exports = {
         }
     },
     appLogin: function (req, res, next) {
-        const { username, password } = req.body;
+        const {username, password} = req.body;
 
         UserModel.authenticate(username, password, function (err, user) {
             if (err || !user) {
-            return res.status(401).json({ error: 'Invalid username or password.' });
+                return res.status(401).json({error: 'Invalid username or password.'});
             }
 
-            const payload = { id: user._id, username: user.username, email: user.email };
-            const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
+            const payload = {id: user._id, username: user.username, email: user.email};
+            const token = jwt.sign(payload, SECRET_KEY, {expiresIn: '30d'});
 
-            return res.status(200).json({ token, user: payload });
+            return res.status(200).json({token, user: payload});
         });
     },
 
-    appLogout: function(req, res){
-         if(req.session){
-            req.session.destroy(function(err){
-              return res.status(200).json({});
+    appLogout: function (req, res) {
+        if (req.session) {
+            req.session.destroy(function (err) {
+                return res.status(200).json({});
             });
         }
     },
-   appValidation: async function (req, res) {
+    appValidation: async function (req, res) {
         try {
             console.log('Received appValidation request');
             console.log('req.user:', req.user);
@@ -234,46 +233,46 @@ module.exports = {
             console.log('Extracted userId:', userId);
 
             if (!userId) {
-            console.log('User ID missing in token');
-            return res.status(400).json({ error: 'User ID missing in token' });
+                console.log('User ID missing in token');
+                return res.status(400).json({error: 'User ID missing in token'});
             }
 
             const user = await UserModel.findById(userId).exec();
 
             if (!user) {
-            console.log('User not found for id:', userId);
-            return res.status(404).json({ error: 'User not found' });
+                console.log('User not found for id:', userId);
+                return res.status(404).json({error: 'User not found'});
             }
 
             console.log('User found:', user);
             return res.json(user);
         } catch (err) {
             console.error('Unhandled error in appValidation:', err);
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({error: 'Internal server error'});
         }
     },
-    userExists: async function(req, res) {
+    userExists: async function (req, res) {
         try {
-            const { email, username } = req.body;
+            const {email, username} = req.body;
 
             if (!email && !username) {
-                return res.status(400).json({ 
+                return res.status(400).json({
                     message: "Email or username must be provided"
                 });
             }
 
-            const query = { 
+            const query = {
                 $or: []
             };
-            if (email) query.$or.push({ email });
-            if (username) query.$or.push({ username });
+            if (email) query.$or.push({email});
+            if (username) query.$or.push({username});
 
             const user = await UserModel.findOne(query).exec();
 
             if (user) {
-                return res.status(200).json({ exists: true });
+                return res.status(200).json({exists: true});
             } else {
-                return res.status(200).json({ exists: false });
+                return res.status(200).json({exists: false});
             }
 
         } catch (err) {
