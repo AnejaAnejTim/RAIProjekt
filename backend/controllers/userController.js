@@ -1,4 +1,5 @@
 var UserModel = require('../models/userModel.js');
+var PushNotificationModel = require('../models/pushNotificationModel.js');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
 /**
@@ -29,10 +30,8 @@ module.exports = {
      */
     show: function (req, res) {
         var id = req.params.id;
-
-        // Find the user by ID and populate the `postedBy` field to get the user details
         UserModel.findOne({_id: id})
-            .populate('postedBy')  // This will populate the `postedBy` field
+            .populate('postedBy') 
             .exec(function (err, user) {
                 if (err) {
                     return res.status(500).json({
@@ -46,8 +45,6 @@ module.exports = {
                         message: 'No such user'
                     });
                 }
-
-                // If the population of `postedBy` is successful, it will be included in the `user` object
                 return res.json(user);
             });
     },
@@ -171,8 +168,6 @@ module.exports = {
                 err.status = 401;
                 return next(err);
             }
-            //req.session.userId = user._id;
-            //res.redirect('/users/profile');
             return res.json(user);
         });
     },
@@ -286,6 +281,32 @@ module.exports = {
                 error: err
             });
         }
+    },
+    savePushToken: async function (req, res) {
+        try {
+            const user = req.body.user;
+            const token = req.body.token;
+
+            console.log(req.body);
+            const existing = await PushNotificationModel.findOne({ user });
+            if (existing) {
+            existing.token = token;
+            await existing.save();
+            } else {
+            const pushNotification = new PushNotificationModel({ user, token });
+            await pushNotification.save();
+            }
+
+            return res.status(201).json({ message: 'Push token saved successfully' });
+
+        } catch (err) {
+            console.error('Error saving push token:', err);
+            return res.status(500).json({
+            message: 'Error when saving push notification token',
+            error: err.toString()
+            });
+        }
     }
+
 
 };

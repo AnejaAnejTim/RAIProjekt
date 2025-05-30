@@ -5,6 +5,8 @@ const auth = require('../middleware/auth');
 const loginConfirmationController = require('../controllers/loginConfirmationController');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
+
+
 router.get('/', userController.list);
 router.get('/register', userController.showRegister);
 router.get('/login', userController.showLogin);
@@ -22,6 +24,7 @@ router.post('/', userController.create);
 router.post('/login', userController.login);
 router.post('/appLogin', userController.appLogin);
 router.post('/logout', userController.appLogout);
+router.post('/savePushToken', userController.savePushToken);
 
 router.put('/:id', userController.update);
 

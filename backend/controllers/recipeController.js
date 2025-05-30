@@ -79,7 +79,6 @@ module.exports = {
      * recipeController.create()
      */
     create: async function (req, res) {
-    // Your existing code to get user and fridge ingredients
     var user = req.session.userId;
     var filters = req.body.filters;
     var ingredientsIds = req.body.ingredients;
@@ -131,7 +130,6 @@ module.exports = {
 
       const recipeRes = JSON.parse(response.choices[0].message.content);
 
-      // Split the ingredients string by commas and trim to get array of strings
       const ingredientsArray = recipeRes.ingredients
         .split(',')
         .map(s => s.trim())
@@ -141,7 +139,7 @@ module.exports = {
         user: user,
         title: recipeRes.recipeTitle,
         description: recipeRes.instructions,
-        ingredients: ingredientsArray,   // <-- store array here
+        ingredients: ingredientsArray, 
         prep_time: recipeRes.prepTime,
         cook_time: recipeRes.cookTime
       });
