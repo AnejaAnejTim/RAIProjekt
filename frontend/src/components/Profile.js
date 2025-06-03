@@ -1,13 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../userContext';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import React, {useContext, useEffect, useState} from 'react';
+import {UserContext} from '../userContext';
+import {useNavigate} from 'react-router-dom';
+import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -18,30 +17,35 @@ L.Icon.Default.mergeOptions({
 
 function Profile() {
     const userContext = useContext(UserContext);
-    const [activeDeviceIds, setActiveDeviceIds] = useState([]);
     const [profile, setProfile] = useState({});
-    const [devices, setDevices] = useState([]);
+    const [activeDevices, setActiveDevices] = useState([]);
+    const [inactiveDevices, setInactiveDevices] = useState([]);
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [mapCenter, setMapCenter] = useState([46.056946, 14.505751]);
-
     const navigate = useNavigate();
 
-    useEffect(function(){
-        const getProfile = async function(){
+    useEffect(() => {
+        const getProfile = async () => {
             const res = await fetch("http://localhost:3001/users/profile", {credentials: "include"});
             const data = await res.json();
             setProfile(data);
-        }
+        };
         getProfile();
     }, []);
 
     useEffect(() => {
-        const fetchActiveDevices = async () => {
-            const res = await fetch("http://localhost:3001/api/active-devices", {credentials: "include"});
+        const fetchDevices = async () => {
+            const res = await fetch("http://localhost:3001/api/my-active-inactive-devices", {credentials: "include"});
             const data = await res.json();
-            setActiveDeviceIds(Array.isArray(data) ? data.map(d => d.deviceId) : Object.keys(data));
+            setActiveDevices(data.activeDevices || []);
+            setInactiveDevices(data.inactiveDevices || []);
+            if ((data.activeDevices || []).length > 0) {
+                setSelectedDevice(data.activeDevices[0]);
+            } else if ((data.inactiveDevices || []).length > 0) {
+                setSelectedDevice(data.inactiveDevices[0]);
+            }
         };
-        fetchActiveDevices();
+        fetchDevices();
     }, []);
 
     function ChangeMapView({center, zoom}) {
@@ -49,20 +53,6 @@ function Profile() {
         map.setView(center, zoom);
         return null;
     }
-
-    useEffect(() => {
-        const getDevices = async () => {
-            const res = await fetch("http://localhost:3001/api/my-latest-locations", {credentials: "include"});
-            const data = await res.json();
-            setDevices(data);
-            if (data.length > 0) {
-                setSelectedDevice(data[0]);
-                setMapCenter([data[0].latitude, data[0].longitude]);
-            }
-        };
-        getDevices();
-    }, []);
-
 
     const handleDeviceClick = (device) => {
         setSelectedDevice(device);
@@ -103,28 +93,47 @@ function Profile() {
                             <hr/>
                             <div className="row mt-4">
                                 <div className="col-md-4">
-                                    <h5>Moje naprave</h5>
+                                    <h5>Active Devices</h5>
+                                    <ul className="list-group mb-3">
+                                        {activeDevices.length > 0 ? activeDevices.map(device => (
+                                            <li
+                                                key={device.deviceId}
+                                                className={`list-group-item ${selectedDevice && selectedDevice.deviceId === device.deviceId ? 'active' : ''}`}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                    backgroundColor: selectedDevice && selectedDevice.deviceId === device.deviceId ? '#e6f7e6' : undefined,
+                                                    color: '#000000'
+                                                }}
+                                                onClick={() => handleDeviceClick(device)}
+                                            >
+                                                {device.deviceId}
+                                                <span style={{color: 'green', marginLeft: 8}}>● Connected</span>
+                                                <br/>
+                                                <small>{new Date(device.timestamp).toLocaleString()}</small>
+                                            </li>
+                                        )) : <li className="list-group-item">No active devices</li>}
+                                    </ul>
+                                    <h5>Inactive Devices</h5>
                                     <ul className="list-group">
-                                        {devices.map(device => {
-                                            const isActive = activeDeviceIds.includes(device.deviceId);
-                                            return (
-                                                <li
-                                                    key={device.deviceId}
-                                                    className={`list-group-item ${selectedDevice && selectedDevice.deviceId === device.deviceId ? 'active' : ''}`}
-                                                    style={{
-                                                        cursor: 'pointer',
-                                                        fontWeight: isActive ? 'bold' : 'normal'
-                                                    }}
-                                                    onClick={() => handleDeviceClick(device)}
-                                                >
-                                                    {device.deviceId}
-                                                    {isActive && <span style={{color: 'green', marginLeft: 8}}>● Connected</span>}
-                                                    <br/>
-                                                    <small>{new Date(device.timestamp).toLocaleString()}</small>
-                                                </li>
-                                            );
-                                        })}
-                                        {devices.length === 0 && <li className="list-group-item">Ni naprav</li>}
+                                        {inactiveDevices.length > 0 ? inactiveDevices.map(device => (
+                                            <li
+                                                key={device.deviceId}
+                                                className={`list-group-item ${selectedDevice && selectedDevice.deviceId === device.deviceId ? 'active' : ''}`}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                    backgroundColor: selectedDevice && selectedDevice.deviceId === device.deviceId ? '#e6f7e6' : undefined,
+                                                    color: '#000000'
+                                                }}
+                                                onClick={() => handleDeviceClick(device)}
+                                            >
+                                                {device.deviceId}
+                                                <span style={{color: 'red', marginLeft: 8}}>● Disconnected</span>
+                                                <br/>
+                                                <small>{new Date(device.timestamp).toLocaleString()}</small>
+                                            </li>
+                                        )) : <li className="list-group-item">No inactive devices</li>}
                                     </ul>
                                 </div>
                                 <div className="col-md-8">

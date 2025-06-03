@@ -1,18 +1,18 @@
 const mqtt = require('mqtt');
 const Location = require('../models/locationModel');
 
-const client = mqtt.connect('mqtt://100.117.101.70:1883');
-const activeDevices = new Map();
+const mqttClient = mqtt.connect('mqtt://100.110.68.49:1883');
+const onlineDevices = new Map();
 
-client.on('connect', () => {
-  console.log('📡 Povezan na MQTT broker');
-  client.subscribe('device/location');
+mqttClient.on('connect', () => {
+  console.log('📡 Connected to MQTT broker');
+  mqttClient.subscribe('device/location');
 });
 
-client.on('message', async (topic, message) => {
+mqttClient.on('message', async (topic, payload) => {
   try {
-    const data = JSON.parse(message.toString());
-    const { deviceId, latitude, longitude, timestamp, user } = data;
+    const msg = JSON.parse(payload.toString());
+    const { deviceId, latitude, longitude, timestamp, user } = msg;
     await Location.create({
       deviceId,
       latitude,
@@ -20,24 +20,24 @@ client.on('message', async (topic, message) => {
       timestamp: timestamp ? new Date(timestamp) : new Date(),
       user,
     });
-    activeDevices.set(deviceId, Date.now());
-  } catch (err) {
-    console.error('Napaka pri obdelavi sporočila:', err.message);
+    onlineDevices.set(deviceId, Date.now());
+  } catch (e) {
+    console.error('Error processing MQTT message:', e.message);
   }
 });
 
 setInterval(() => {
-  const now = Date.now();
-  for (const [deviceId, lastSeen] of activeDevices.entries()) {
-    if (now - lastSeen > 20 * 1000) {
-      activeDevices.delete(deviceId);
+  const cutoff = Date.now() - 20 * 1000;
+  for (const [id, last] of onlineDevices.entries()) {
+    if (last < cutoff) {
+      onlineDevices.delete(id);
     }
   }
 }, 60 * 1000);
 
 module.exports = {
   getActiveDevices: () => ({
-    count: activeDevices.size,
-    devices: Array.from(activeDevices.keys()),
+    count: onlineDevices.size,
+    devices: Array.from(onlineDevices.keys()),
   }),
 };

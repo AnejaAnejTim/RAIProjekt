@@ -14,22 +14,10 @@ function requiresLogin(req, res, next) {
     }
 }
 
-router.get('/locations', requiresLogin, async (req, res) => {
-    try {
-        const data = await Location.find().sort({timestamp: -1}).limit(100);
-        res.json(data);
-    } catch (err) {
-        res.status(500).json({error: 'Napaka pri pridobivanju lokacij'});
-    }
-});
-
-router.get('/active-devices', requiresLogin, (req, res) => {
-    res.json(getActiveDevices());
-});
-
-router.get('/my-latest-locations', requiresLogin, async (req, res) => {
+router.get('/my-active-inactive-devices', requiresLogin, async (req, res) => {
     try {
         const userId = req.session.userId;
+
         const latestLocations = await Location.aggregate([
             { $match: { user: require('mongoose').Types.ObjectId(userId) } },
             { $sort: { timestamp: -1 } },
@@ -43,11 +31,50 @@ router.get('/my-latest-locations', requiresLogin, async (req, res) => {
                 }
             }
         ]);
-        res.json(latestLocations);
+
+        const activeDevicesObj = getActiveDevices();
+        const activeDeviceIds = Array.isArray(activeDevicesObj.devices)
+            ? activeDevicesObj.devices.map(id => id.toString())
+            : [];
+
+        const activeDevices = latestLocations.filter(device =>
+            activeDeviceIds.includes(device.deviceId.toString())
+        );
+        const inactiveDevices = latestLocations.filter(device =>
+            !activeDeviceIds.includes(device.deviceId.toString())
+        );
+
+        res.json({ activeDevices, inactiveDevices });
     } catch (err) {
-        res.status(500).json({ error: 'Error fetching latest locations' });
+        res.status(500).json({ error: 'Error fetching devices' });
     }
 });
 
+router.get('/active-devices', requiresLogin, (req, res) => {
+    try {
+        const activeDevices = getActiveDevices();
+        res.json(activeDevices);
+    } catch (err) {
+        res.status(500).json({error: 'Napaka pri pridobivanju aktivnih naprav'});
+    }
+});
+
+router.get('/all-devices', async (req, res) => {
+    try {
+        const allDevices = await Location.find().distinct('deviceId');
+        res.json(allDevices);
+    } catch (err) {
+        res.status(500).json({error: 'Napaka pri pridobivanju vseh naprav'});
+    }
+});
+
+router.get('/locations', requiresLogin, async (req, res) => {
+    try {
+        const data = await Location.find().sort({timestamp: -1}).limit(100);
+        res.json(data);
+    } catch (err) {
+        res.status(500).json({error: 'Napaka pri pridobivanju lokacij'});
+    }
+});
 
 module.exports = router;
