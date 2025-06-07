@@ -49,7 +49,7 @@ function RecipeHistory() {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }}
             >
-                <h2 style={{ fontSize: '1.8rem', color: 'white', margin: 0 }}>🍽️ Moji recepti</h2>
+                <h2 style={{ fontSize: '1.8rem', color: 'white', margin: 0 }}>Moji recepti</h2>
             </div>
 
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>

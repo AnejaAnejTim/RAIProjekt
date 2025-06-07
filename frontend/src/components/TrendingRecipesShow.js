@@ -20,7 +20,7 @@ function TrendingRecipesShow() {
         <div style={{ padding: '30px 10%', fontFamily: 'Segoe UI, sans-serif' }}>
             <div
                 style={{
-                    backgroundColor: '#84c318',
+                    backgroundColor: '#b0d16b',
                     padding: '25px',
                     borderRadius: '16px',
                     textAlign: 'center',
@@ -29,7 +29,7 @@ function TrendingRecipesShow() {
                 }}
             >
                 <h2 style={{ fontSize: '2rem', color: 'white', margin: 0 }}>
-                    🔥 Trending ta teden
+                    Trending ta teden
                 </h2>
             </div>
 

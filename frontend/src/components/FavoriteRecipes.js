@@ -45,7 +45,7 @@ function FavoriteRecipes() {
                 }}
             >
                 <h2 style={{ fontSize: '1.8rem', color: 'white', margin: 0 }}>
-                    ⭐ Priljubljeni recepti
+                    Priljubljeni recepti
                 </h2>
             </div>
             <div
