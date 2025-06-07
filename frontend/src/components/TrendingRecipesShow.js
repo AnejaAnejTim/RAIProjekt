@@ -1,11 +1,40 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faUtensils, faEye } from '@fortawesome/free-solid-svg-icons';
+import {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+    faStar as faStarSolid,
+    faStar as faStarRegular,
+    faUtensils,
+    faEye
+} from '@fortawesome/free-solid-svg-icons';
 
 function TrendingRecipesShow() {
     const [hoveredRecipe, setHoveredRecipe] = useState(null);
     const [trendingRecipes, setTrendingRecipes] = useState([]);
+    const [favorites, setFavorites] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/users/favorites', {credentials: 'include'})
+            .then(res => res.json())
+            .then(data => setFavorites(data.map(r => r._id)))
+            .catch(() => setFavorites([]));
+    }, []);
+
+    const isFavorite = (id) => favorites.includes(id);
+
+    const toggleFavorite = (id) => {
+        const method = isFavorite(id) ? 'DELETE' : 'POST';
+        fetch(`http://localhost:3001/api/users/favorites/${id}`, {
+            method,
+            credentials: 'include'
+        })
+            .then(res => res.json())
+            .then(() => {
+                setFavorites(favs =>
+                    isFavorite(id) ? favs.filter(favId => favId !== id) : [...favs, id]
+                );
+            });
+    };
 
     useEffect(() => {
         fetch('http://localhost:3001/recipes/trending')
@@ -16,8 +45,9 @@ function TrendingRecipesShow() {
 
     const placeholderImage =
         'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
+
     return (
-        <div style={{ padding: '30px 10%', fontFamily: 'Segoe UI, sans-serif' }}>
+        <div style={{padding: '30px 10%', fontFamily: 'Segoe UI, sans-serif'}}>
             <div
                 style={{
                     backgroundColor: '#b0d16b',
@@ -28,7 +58,7 @@ function TrendingRecipesShow() {
                     boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
                 }}
             >
-                <h2 style={{ fontSize: '2rem', color: 'white', margin: 0 }}>
+                <h2 style={{fontSize: '2rem', color: 'white', margin: 0}}>
                     Trending ta teden
                 </h2>
             </div>
@@ -42,6 +72,10 @@ function TrendingRecipesShow() {
             >
                 {trendingRecipes.map((recipe) => {
                     const isHovered = hoveredRecipe === recipe._id;
+                    const shortDesc =
+                        recipe.description.length > 80
+                            ? recipe.description.slice(0, 77) + '...'
+                            : recipe.description;
                     const imageUrl = recipe.mainImage
                         ? `http://localhost:3001/recipes/images/${recipe.mainImage}`
                         : placeholderImage;
@@ -50,12 +84,13 @@ function TrendingRecipesShow() {
                         <Link
                             key={recipe._id}
                             to={`/recipe/${recipe._id}`}
-                            style={{ textDecoration: 'none', color: 'inherit' }}
+                            style={{textDecoration: 'none', color: 'inherit'}}
                             onMouseEnter={() => setHoveredRecipe(recipe._id)}
                             onMouseLeave={() => setHoveredRecipe(null)}
                         >
                             <div
                                 style={{
+                                    position: 'relative',
                                     backgroundColor: '#fff',
                                     padding: '20px',
                                     borderRadius: '16px',
@@ -68,6 +103,31 @@ function TrendingRecipesShow() {
                                     cursor: 'pointer',
                                 }}
                             >
+                                <button
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        toggleFavorite(recipe._id);
+                                    }}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        position: 'absolute',
+                                        top: 12,
+                                        right: 12,
+                                        cursor: 'pointer',
+                                        zIndex: 10,
+                                    }}
+                                    aria-label={isFavorite(recipe._id) ? 'Unfavorite' : 'Favorite'}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={isFavorite(recipe._id) ? faStarSolid : faStarRegular}
+                                        style={{
+                                            color: isFavorite(recipe._id) ? '#f39c12' : '#bbb',
+                                            fontSize: 26,
+                                        }}
+                                    />
+                                </button>
+
                                 <img
                                     src={imageUrl}
                                     alt={recipe.title}
@@ -87,10 +147,27 @@ function TrendingRecipesShow() {
                                         color: '#84c318',
                                     }}
                                 />
-                                <h3 style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{recipe.title}</h3>
-                                <div style={{ fontSize: '1rem', color: '#f39c12' }}>
-                                    <FontAwesomeIcon icon={faEye} />{' '}
-                                    {recipe.views ?? 0}
+                                <h3 style={{fontSize: '1.3rem', marginBottom: '10px'}}>{recipe.title}</h3>
+                                <p
+                                    style={{
+                                        fontSize: '0.95rem',
+                                        color: '#555',
+                                        marginBottom: '12px',
+                                        flexGrow: 1,
+                                    }}
+                                >
+                                    {shortDesc}
+                                </p>
+                                <div style={{
+                                    fontSize: '1.3rem',
+                                    color: '#888',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px'
+                                }}>
+                                    <FontAwesomeIcon icon={faEye} style={{fontSize: '1.3rem'}}/>
+                                    <span>{recipe.views ?? 0}</span>
                                 </div>
                             </div>
                         </Link>

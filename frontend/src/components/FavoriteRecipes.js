@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar as faStarSolid, faEye } from '@fortawesome/free-solid-svg-icons';
+import {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faStar as faStarSolid, faEye} from '@fortawesome/free-solid-svg-icons';
 
 function FavoriteRecipes() {
     const [recipes, setRecipes] = useState([]);
@@ -9,7 +9,7 @@ function FavoriteRecipes() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/users/favorites', { credentials: 'include' })
+        fetch('http://localhost:3001/api/users/favorites', {credentials: 'include'})
             .then(res => res.json())
             .then(data => {
                 setRecipes(data);
@@ -24,16 +24,16 @@ function FavoriteRecipes() {
     const placeholderImage = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
 
     if (loading)
-        return <p style={{ textAlign: 'center', marginTop: '50px' }}>Loading favorite recipes...</p>;
+        return <p style={{textAlign: 'center', marginTop: '50px'}}>Loading favorite recipes...</p>;
 
     if (error)
-        return <p style={{ color: 'red', textAlign: 'center', marginTop: '50px' }}>{error}</p>;
+        return <p style={{color: 'red', textAlign: 'center', marginTop: '50px'}}>{error}</p>;
 
     if (recipes.length === 0)
-        return <p style={{ textAlign: 'center', marginTop: '50px' }}>You have no favorite recipes.</p>;
+        return <p style={{textAlign: 'center', marginTop: '50px'}}>You have no favorite recipes.</p>;
 
     return (
-        <div style={{ padding: '30px 10%', fontFamily: 'sans-serif' }}>
+        <div style={{padding: '30px 10%', fontFamily: 'sans-serif'}}>
             <div
                 style={{
                     backgroundColor: '#b0d16b',
@@ -44,7 +44,7 @@ function FavoriteRecipes() {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }}
             >
-                <h2 style={{ fontSize: '1.8rem', color: 'white', margin: 0 }}>
+                <h2 style={{fontSize: '1.8rem', color: 'white', margin: 0}}>
                     Priljubljeni recepti
                 </h2>
             </div>
@@ -64,7 +64,7 @@ function FavoriteRecipes() {
                         <Link
                             key={recipe._id}
                             to={`/recipe/${recipe._id}`}
-                            style={{ textDecoration: 'none', color: 'inherit' }}
+                            style={{textDecoration: 'none', color: 'inherit'}}
                         >
                             <div
                                 style={{
@@ -105,7 +105,7 @@ function FavoriteRecipes() {
                                         marginBottom: '15px',
                                     }}
                                 />
-                                <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
+                                <h3 style={{fontSize: '1.2rem', marginBottom: '8px'}}>
                                     {recipe.title}
                                 </h3>
                                 <p
@@ -118,8 +118,8 @@ function FavoriteRecipes() {
                                 >
                                     {shortDesc}
                                 </p>
-                                <div style={{ fontSize: '1rem', color: '#888' }}>
-                                    <FontAwesomeIcon icon={faEye} /> {recipe.views ?? 0}
+                                <div style={{fontSize: '1.3rem', color: '#888'}}>
+                                    <FontAwesomeIcon icon={faEye}/> {recipe.views ?? 0}
                                 </div>
                             </div>
                         </Link>

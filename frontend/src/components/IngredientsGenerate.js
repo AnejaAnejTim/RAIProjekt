@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {useState} from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import nextPageIcon from '../assets/nextPage.svg';
 import previousPageIcon from '../assets/previousPage.svg';
 
-function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, searchTerm, setSearchTerm }) {
+function IngredientsGenerate({foodItems, selectedItems, handleItemSelection, searchTerm, setSearchTerm}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredItem, setHoveredItem] = useState(null);
-  const itemsPerPage = 12;
+  const itemsPerPage = 10;
 
   const filteredItems = foodItems.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -24,7 +24,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
 
   return (
     <>
-      <div style={{ marginTop: '10px' }}>
+      <div style={{marginTop: '10px'}}>
         <input
           type="text"
           placeholder="Iščite sestavino..."
@@ -45,15 +45,18 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
         />
       </div>
 
+      {/* Responsive Grid */}
       <div
         style={{
           display: 'grid',
-          gridTemplateRows: 'repeat(3, 1fr)',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
           gap: '25px',
           padding: '5px',
           justifyItems: 'center',
           alignItems: 'center',
+          width: '100%',
+          maxWidth: '900px',
+          marginInline: 'auto',
         }}
       >
         {currentItems.map((item) => {
@@ -76,13 +79,15 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                 justifyContent: 'center',
                 alignItems: 'center',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                width: '90%',
+                width: '100%',
+                maxWidth: '140px',
                 height: '100%',
                 marginBottom: '10px',
                 marginTop: '10px',
                 transition: 'transform 0.2s ease, filter 0.2s ease-in-out',
                 transform: isHovered ? 'scale(1.03)' : 'scale(1)',
                 filter: isHovered ? 'brightness(90%)' : 'none',
+                cursor: 'pointer',
               }}
             >
               <FontAwesomeIcon
@@ -90,12 +95,13 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
                 style={{
                   fontSize: '50px',
                   marginBottom: '2px',
+                  pointerEvents: 'none',
                 }}
               />
-              <span style={{ fontSize: '0.9rem' }}>{item.name}</span>
-               <div style={{ fontSize: '0.8rem', color: '#555' }}>
-                  {item.quantity} {item.unit}
-                </div>
+              <span style={{fontSize: '0.9rem', pointerEvents: 'none'}}>{item.name}</span>
+              <div style={{fontSize: '0.8rem', color: '#555', pointerEvents: 'none'}}>
+                {item.quantity} {item.unit}
+              </div>
               <input
                 type="checkbox"
                 checked={isSelected}
@@ -111,6 +117,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
         })}
       </div>
 
+      {/* Pagination */}
       {totalPages > 1 && (
         <div
           style={{
@@ -135,9 +142,9 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
               justifyContent: 'center',
             }}
           >
-            <img src={previousPageIcon} alt="Previous" style={{ width: '40px', height: '40px' }} />
+            <img src={previousPageIcon} alt="Previous" style={{width: '40px', height: '40px'}}/>
           </button>
-          <span style={{ fontSize: '1rem' }}>Stran {currentPage} od {totalPages}</span>
+          <span style={{fontSize: '1rem'}}>Stran {currentPage} od {totalPages}</span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
@@ -151,7 +158,7 @@ function IngredientsGenerate({ foodItems, selectedItems, handleItemSelection, se
               justifyContent: 'center',
             }}
           >
-            <img src={nextPageIcon} alt="Next" style={{ width: '40px', height: '40px' }} />
+            <img src={nextPageIcon} alt="Next" style={{width: '40px', height: '40px'}}/>
           </button>
         </div>
       )}

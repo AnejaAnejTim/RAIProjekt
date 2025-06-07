@@ -1,21 +1,21 @@
-import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {useState} from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import nextPageIcon from '../assets/nextPage.svg';
 import previousPageIcon from '../assets/previousPage.svg';
 import removeIcon from '../assets/x.svg';
 import trashIcon from '../assets/trash.svg';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import plusGreenIcon from '../assets/plusGreen.svg';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 
 function IngredientsMyFridge({
-  foodItems,
-  selectedItems,
-  handleItemSelection,
-  searchTerm,
-  setSearchTerm,
-  onRemoveItem,
-}) {
+                               foodItems,
+                               selectedItems,
+                               handleItemSelection,
+                               searchTerm,
+                               setSearchTerm,
+                               onRemoveItem,
+                             }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [itemToRemove, setItemToRemove] = useState(null);
@@ -24,7 +24,7 @@ function IngredientsMyFridge({
   const [isDeleting, setIsDeleting] = useState(false); // New loading state
 
   const canDeleteSelected = canUseMultiSelect && selectedItems.length > 0;
-  const itemsPerPage = 12;
+  const itemsPerPage = 10;
 
   const filteredItems = foodItems.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -41,9 +41,9 @@ function IngredientsMyFridge({
   };
   useEffect(() => {
     if (currentPage > totalPages) {
-        setCurrentPage(totalPages || 1);
+      setCurrentPage(totalPages || 1);
     }
-    }, [totalPages, currentPage]);
+  }, [totalPages, currentPage]);
 
   const handleToggleChange = () => {
     const newValue = !canUseMultiSelect;
@@ -82,7 +82,7 @@ function IngredientsMyFridge({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ids: itemIds }),
+        body: JSON.stringify({ids: itemIds}),
       });
 
       if (!response.ok) {
@@ -115,7 +115,7 @@ function IngredientsMyFridge({
           <img
             src={plusGreenIcon}
             alt="Add"
-            style={{ width: '25px', height: '25px', cursor: 'pointer', display: 'block' }}
+            style={{width: '25px', height: '25px', cursor: 'pointer', display: 'block'}}
           />
         </Link>
 
@@ -136,11 +136,11 @@ function IngredientsMyFridge({
           }}
         />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
           <label
-            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '10px' }}
+            style={{display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '10px'}}
           >
-            <span style={{ fontSize: '1rem' }}>Omogoči večkratni izbor</span>
+            <span style={{fontSize: '1rem'}}>Omogoči večkratni izbor</span>
             <div
               onClick={handleToggleChange}
               style={{
@@ -187,16 +187,17 @@ function IngredientsMyFridge({
         </div>
       </div>
 
-      {/* Grid displaying food items */}
       <div
         style={{
           display: 'grid',
-          gridTemplateRows: 'repeat(3, 1fr)',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
           gap: '25px',
           padding: '5px',
           justifyItems: 'center',
           alignItems: 'center',
+          width: '100%',
+          maxWidth: '900px',
+          marginInline: 'auto',
         }}
       >
         {currentItems.map((item, idx) => {
@@ -215,9 +216,7 @@ function IngredientsMyFridge({
               }}
               style={{
                 position: 'relative',
-                backgroundColor: isSelected
-                  ? '#b0d16b'
-                  : 'rgba(255, 255, 255, 0.5)',
+                backgroundColor: isSelected ? '#b0d16b' : 'rgba(255, 255, 255, 0.5)',
                 padding: '5px',
                 borderRadius: '5px',
                 display: 'flex',
@@ -225,7 +224,8 @@ function IngredientsMyFridge({
                 justifyContent: 'center',
                 alignItems: 'center',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                width: '90%',
+                width: '100%',
+                maxWidth: '140px',
                 height: '100%',
                 marginBottom: '10px',
                 marginTop: '10px',
@@ -258,11 +258,15 @@ function IngredientsMyFridge({
 
               <FontAwesomeIcon
                 icon={item.icon}
-                style={{ fontSize: '50px', marginBottom: '2px', pointerEvents: 'none' }}
+                style={{
+                  fontSize: '50px',
+                  marginBottom: '4px',
+                  pointerEvents: 'none',
+                }}
               />
-              <div style={{ textAlign: 'center', pointerEvents: 'none' }}>
-                <div style={{ fontSize: '0.9rem' }}>{item.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#555' }}>
+              <div style={{textAlign: 'center', pointerEvents: 'none'}}>
+                <div style={{fontSize: '0.9rem'}}>{item.name}</div>
+                <div style={{fontSize: '0.8rem', color: '#555'}}>
                   {item.quantity} {item.unit}
                 </div>
               </div>
@@ -295,10 +299,10 @@ function IngredientsMyFridge({
               justifyContent: 'center',
             }}
           >
-            <img src={previousPageIcon} alt="Previous" style={{ width: '40px', height: '40px' }} />
+            <img src={previousPageIcon} alt="Previous" style={{width: '40px', height: '40px'}}/>
           </button>
 
-          <span style={{ margin: '0 10px', fontSize: '1rem' }}>
+          <span style={{margin: '0 10px', fontSize: '1rem'}}>
             Stran {currentPage} od {totalPages}
           </span>
 
@@ -315,7 +319,7 @@ function IngredientsMyFridge({
               justifyContent: 'center',
             }}
           >
-            <img src={nextPageIcon} alt="Next" style={{ width: '40px', height: '40px' }} />
+            <img src={nextPageIcon} alt="Next" style={{width: '40px', height: '40px'}}/>
           </button>
         </div>
       )}
@@ -329,7 +333,7 @@ function IngredientsMyFridge({
             <div style={modalButtonGroupStyle}>
               <button
                 onClick={() => !isDeleting && setItemToRemove(null)}
-                style={{ ...cancelButtonStyle, opacity: isDeleting ? 0.5 : 1 }}
+                style={{...cancelButtonStyle, opacity: isDeleting ? 0.5 : 1}}
                 disabled={isDeleting}
               >
                 Prekliči
@@ -346,14 +350,13 @@ function IngredientsMyFridge({
                 style={confirmButtonStyle}
                 disabled={isDeleting}
               >
-                {isDeleting ? <Spinner /> : 'Odstrani'}
+                {isDeleting ? <Spinner/> : 'Odstrani'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal to confirm deleting selected items */}
       {confirmDeleteSelectedVisible && (
         <div style={modalOverlayStyle}>
           <div style={modalBoxStyle}>
@@ -363,7 +366,7 @@ function IngredientsMyFridge({
             <div style={modalButtonGroupStyle}>
               <button
                 onClick={() => !isDeleting && setConfirmDeleteSelectedVisible(false)}
-                style={{ ...cancelButtonStyle, opacity: isDeleting ? 0.5 : 1 }}
+                style={{...cancelButtonStyle, opacity: isDeleting ? 0.5 : 1}}
                 disabled={isDeleting}
               >
                 Prekliči
@@ -382,7 +385,7 @@ function IngredientsMyFridge({
                 style={confirmButtonStyle}
                 disabled={isDeleting}
               >
-                {isDeleting ? <Spinner /> : 'Izbriši'}
+                {isDeleting ? <Spinner/> : 'Izbriši'}
               </button>
             </div>
           </div>
@@ -438,7 +441,7 @@ const modalBoxStyle = {
   maxWidth: '90%',
   fontSize: '1rem',
 };
-const modalButtonGroupStyle = { display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px' };
+const modalButtonGroupStyle = {display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px'};
 const cancelButtonStyle = {
   padding: '8px 20px',
   backgroundColor: '#f5f5f5',

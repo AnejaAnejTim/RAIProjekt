@@ -1,6 +1,6 @@
 import React from 'react';
 
-function CommentCard({ comment }) {
+function CommentCard({comment}) {
     return (
         <div
             style={{
