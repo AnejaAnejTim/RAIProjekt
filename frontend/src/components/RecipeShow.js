@@ -181,6 +181,7 @@ function RecipeShow() {
     } = currentRecipe;
 
     const isOwner = user?._id === author?._id || user?.id === author;
+    console.log(isOwner);
 
     return (
         <>
