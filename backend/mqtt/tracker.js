@@ -1,7 +1,7 @@
 const mqtt = require('mqtt');
 const Location = require('../models/locationModel');
 
-const client = mqtt.connect('mqtt://100.76.67.50:1883');
+const client = mqtt.connect('mqtt://100.117.101.70:1883');
 const activeDevices = new Map();
 
 client.on('connect', () => {
