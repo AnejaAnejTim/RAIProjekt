@@ -59,7 +59,7 @@ function Recipes() {
         }}
       >
         <h2 style={{fontSize: '1.8rem', color: 'white', margin: 0}}>
-          🍽️ Recepti iz baze
+          Vsi recepti
         </h2>
       </div>
 
