@@ -37,9 +37,6 @@ const Header = () => {
 
         <nav className="d-none d-md-block">
           <ul className="nav">
-            <li className="nav-item">
-              <Link to="/" className="nav-link text-white text-decoration-none">Home</Link>
-            </li>
             {user ? (
               <>
                 <li className="nav-item"><Link to="/myfridge" className="nav-link text-white">Moj hladilnik</Link></li>
@@ -61,14 +58,14 @@ const Header = () => {
       {menuOpen && (
         <div id="navbarToggleExternalContent" className="d-md-none p-3" style={{backgroundColor: "#b0d16b"}}>
           <ul className="nav flex-column">
-            <li className="nav-item">
-              <Link to="/" onClick={closeMenu} className="nav-link text-white text-decoration-none">Home</Link>
-            </li>
             {user ? (
               <>
                 <li className="nav-item">
                   <Link to="/myfridge" onClick={closeMenu} className="nav-link text-white text-decoration-none">Moj
                     hladilnik</Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/favorites" onClick={closeMenu} className="nav-link text-white text-decoration-none">Moji recepti</Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/generate" onClick={closeMenu}

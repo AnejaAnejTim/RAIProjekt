@@ -2,6 +2,8 @@ var UserModel = require('../models/userModel.js');
 var PushNotificationModel = require('../models/pushNotificationModel.js');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
+const RecipeModel = require('../models/recipeModel');
+
 /**
  * userController.js
  *
@@ -306,7 +308,69 @@ module.exports = {
             error: err.toString()
             });
         }
+    },
+    getFavorites: async function (req, res) {
+    try {
+        const user = await UserModel.findById(req.session.userId).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json(user.favorites);
+    } catch (err) {
+        console.error('Error fetching favorites:', err);
+        return res.status(500).json({ message: 'Internal server error', error: err });
     }
+},
+
+addFavorite: async function (req, res) {
+    try {
+        const userId = req.session.userId;
+        const recipeId = req.params.id;
+
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const recipeExists = await RecipeModel.exists({ _id: recipeId });
+        if (!recipeExists) {
+            return res.status(404).json({ message: 'Recipe not found' });
+        }
+
+        if (user.favorites.includes(recipeId)) {
+            return res.status(400).json({ message: 'Recipe already in favorites' });
+        }
+
+        user.favorites.push(recipeId);
+        await user.save();
+
+        return res.status(200).json({ message: 'Recipe added to favorites' });
+    } catch (err) {
+        console.error('Error adding favorite:', err);
+        return res.status(500).json({ message: 'Internal server error', error: err });
+    }
+},
+
+removeFavorite: async function (req, res) {
+    try {
+        const userId = req.session.userId;
+        const recipeId = req.params.id;
+
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.favorites = user.favorites.filter(favId => favId.toString() !== recipeId);
+        await user.save();
+
+        return res.status(200).json({ message: 'Recipe removed from favorites' });
+    } catch (err) {
+        console.error('Error removing favorite:', err);
+        return res.status(500).json({ message: 'Internal server error', error: err });
+    }
+}
+
 
 
 };

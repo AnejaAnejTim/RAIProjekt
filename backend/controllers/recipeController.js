@@ -183,50 +183,13 @@ module.exports = {
               model: "gpt-4.1",
               messages: [{role: "user", content: msg}],
             });
-
             const recipeRes = JSON.parse(response.choices[0].message.content);
 
-            const ingredientsArray = recipeRes.ingredients
-              .split(',')
-              .map(s => s.trim())
-              .filter(Boolean);
-
-            var recipe = new RecipeModel({
-              user: user,
-              title: recipeRes.recipeTitle,
-              description: recipeRes.instructions,
-              ingredients: ingredientsArray, 
-              prep_time: recipeRes.prepTime,
-              cook_time: recipeRes.cookTime
-            });
-
-            recipe.save(function (err, recipe) {
-              if (err) {
-                return res.status(500).json({
-                  message: 'Error when creating recipe',
-                  error: err
-                });
-              }
-              return res.status(201).json(recipe);
-            });
-          } catch (err) {
-            console.log(err);
-            return res.status(500).json({
-              message: "Error with OpenAI API",
-              error: err,
-            });
-          }
-        },
-
-            const recipeRes = JSON.parse(response.choices[0].message.content);
-
-            // Split the ingredients string by commas and trim to get array of strings
             const ingredientsArray = recipeRes.ingredients
                 .split(',')
                 .map(s => s.trim())
                 .filter(Boolean);
 
-            // Process uploaded images
             let images = [];
             let mainImage = null;
 
@@ -272,8 +235,6 @@ module.exports = {
         }
     },
 
-    // backend/controllers/recipeController.js
-
     update: async function (req, res) {
         try {
             const id = req.params.id;
@@ -283,7 +244,6 @@ module.exports = {
                 return res.status(404).json({message: 'No such recipe'});
             }
 
-            // Update fields
             recipe.title = req.body.title ?? recipe.title;
             recipe.description = req.body.description ?? recipe.description;
             recipe.prep_time = req.body.prep_time ?? recipe.prep_time;
@@ -300,7 +260,6 @@ module.exports = {
                 }
             }
 
-            // Handle new image uploads
             if (req.files && req.files.length > 0) {
                 const newImages = req.files.map(file => ({
                     filename: file.filename,
@@ -312,15 +271,13 @@ module.exports = {
 
                 recipe.images = recipe.images.concat(newImages);
 
-                // Always set mainImage to the first new image if uploaded
                 recipe.mainImage = newImages[0].filename;
             } else if (req.body.mainImage) {
                 recipe.mainImage = req.body.mainImage;
             }
 
             await recipe.save();
-
-            // Populate user and add image URL
+            
             const updatedRecipe = await RecipeModel.findById(recipe._id)
                 .populate('user', 'username')
                 .lean();

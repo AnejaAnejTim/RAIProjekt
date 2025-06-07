@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 function GenerateFilters({ onFilterChange }) {
     const [selectedMealType, setSelectedMealType] = useState('');
     const [canUseOtherIngredients, setCanUseOtherIngredients] = useState(false);
-
     useEffect(() => {
         onFilterChange('mealType', selectedMealType);
         onFilterChange('canUseOtherIngredients', canUseOtherIngredients);
-    }, [selectedMealType, canUseOtherIngredients, onFilterChange]);
-
+    
+    }, [selectedMealType, canUseOtherIngredients]);
+    
     const handleCheckboxChange = (event) => {
         setSelectedMealType(event.target.value);
     };
