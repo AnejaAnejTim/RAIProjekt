@@ -5,31 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c4d3f63-5956-4aeb-adaf-7c5b14c47ba4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/models/commentModel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749284897678-739457571.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285150594-398964371.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285311213-725634980.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285511556-299140639.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285583123-91897621.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749288540816-688795080.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749289185075-228438093.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749290274418-721549139.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749295656935-482066769.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749295839626-132362414.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749298082173-460338231.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/CommentCard.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/log.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/FavoriteRecipes.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/controllers/recipeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/recipeController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/controllers/userController.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/userController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/models/recipeModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/recipeModel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/recipeRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/recipeRoutes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/RecipeEditForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RecipeEditForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/RecipeHistory.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RecipeHistory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/RecipeShow.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RecipeShow.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/models/userModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/userModel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/userRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/userRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Header.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Recipes.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Recipes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/TrendingRecipesShow.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/TrendingRecipesShow.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -19,14 +19,14 @@ const Header = ({ title }) => {
         </div>
             <nav>
               <ul className="nav">
-                <li className="nav-item">
-                  <Link to="/" className="nav-link text-white text-decoration-none">Home</Link>
-                </li>
                 {user ? (
                   <>
                     <li className="nav-item">
                       <Link to="/myfridge" className="nav-link text-white text-decoration-none">Moj hladilnik</Link>
                     </li>
+                      <li className="nav-item">
+                          <Link to="/favorites" className="nav-link text-white text-decoration-none">Moji recepti</Link>
+                      </li>
                     <li className="nav-item">
                       <Link to="/generate" className="nav-link text-white text-decoration-none">Generiraj</Link>
                     </li>
