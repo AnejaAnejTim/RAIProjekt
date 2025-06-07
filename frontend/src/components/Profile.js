@@ -66,10 +66,6 @@ function Profile() {
                     const found = data.find(d => d.deviceId === prev?.deviceId);
                     return found ? found : data[0] || null;
                 });
-
-                if (data.length > 0) {
-                    setMapCenter([data[0].latitude, data[0].longitude]);
-                }
             } catch (error) {
                 console.error("Napaka pri osveževanju naprav:", error);
             }
@@ -79,6 +75,12 @@ function Profile() {
         const intervalId = setInterval(getDevices, 5000);
         return () => clearInterval(intervalId);
     }, []);
+
+    useEffect(() => {
+        if (selectedDevice) {
+            setMapCenter([selectedDevice.latitude, selectedDevice.longitude]);
+        }
+    }, [selectedDevice]);
 
     function ChangeMapView({center, zoom}) {
         const map = useMap();
