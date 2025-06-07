@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import iconMap from "../utils/iconMap";
 import IngredientsMyFridge from "./IngredientsMyFridge";
 
@@ -14,7 +14,7 @@ function MyFridge() {
         : [...prev, itemLabel]
     );
   };
-  
+
   function handleRemoveItemFromList(itemId) {
     setFridgeItems(prevItems => prevItems.filter(item => item._id !== itemId));
   }
@@ -56,7 +56,7 @@ function MyFridge() {
                 }}
               >
                 Vaš hladilnik
-                <div style={{ fontSize: "1.6rem" }}>
+                <div style={{fontSize: "1.6rem"}}>
                   Tukaj imate pregled vseh vaših sestavin
                 </div>
                 <IngredientsMyFridge

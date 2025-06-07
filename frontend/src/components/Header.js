@@ -65,7 +65,8 @@ const Header = () => {
                     hladilnik</Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/favorites" onClick={closeMenu} className="nav-link text-white text-decoration-none">Moji recepti</Link>
+                  <Link to="/favorites" onClick={closeMenu} className="nav-link text-white text-decoration-none">Moji
+                    recepti</Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/generate" onClick={closeMenu}

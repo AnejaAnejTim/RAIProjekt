@@ -4,6 +4,11 @@ import TimeIcon from '../assets/time.svg';
 import {UserContext} from '../userContext';
 import RecipeEditForm from './RecipeEditForm';
 import CommentCard from "./CommentCard";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+    faStar as faStarSolid,
+    faStar as faStarRegular
+} from '@fortawesome/free-solid-svg-icons';
 
 function RecipeShow() {
     const {id} = useParams();
@@ -19,6 +24,8 @@ function RecipeShow() {
     const [newComment, setNewComment] = useState('');
     const [commentError, setCommentError] = useState('');
     const commentInputRef = useRef(null);
+    const [favorites, setFavorites] = useState([]);
+    const [favLoading, setFavLoading] = useState(true);
 
     useEffect(() => {
         if (!id) return;
@@ -49,6 +56,45 @@ function RecipeShow() {
                 setLoading(false);
             });
     }, [id]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/users/favorites', {credentials: 'include'})
+            .then(res => res.json())
+            .then(data => {
+                setFavorites(data.map(r => r._id));
+                setFavLoading(false);
+            })
+            .catch(() => {
+                setFavorites([]);
+                setFavLoading(false);
+            });
+    }, []);
+
+    const isFavorite = (recipeId) => favorites.includes(recipeId);
+
+    const toggleFavorite = (recipeId) => {
+        const method = isFavorite(recipeId) ? 'DELETE' : 'POST';
+        fetch(`http://localhost:3001/api/users/favorites/${recipeId}`, {
+            method,
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('Napaka pri spreminjanju priljubljenih');
+                return res.json();
+            })
+            .then(() => {
+                setFavorites(prevFavs => {
+                    if (method === 'POST') {
+                        return [...prevFavs, recipeId];
+                    } else {
+                        return prevFavs.filter(id => id !== recipeId);
+                    }
+                });
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+    };
 
     const fetchComments = () => {
         fetch(`http://localhost:3001/recipes/${id}/comments`)
@@ -197,7 +243,7 @@ function RecipeShow() {
                 }}
             >
                 {image && (
-                    <div style={{width: '100%', overflow: 'hidden'}}>
+                    <div style={{position: 'relative', width: '100%', overflow: 'hidden'}}>
                         <img
                             src={image}
                             alt={title}
@@ -211,6 +257,34 @@ function RecipeShow() {
                             onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.05)')}
                             onMouseOut={e => (e.currentTarget.style.transform = 'scale(1)')}
                         />
+                        <button
+                            onClick={() => toggleFavorite(currentRecipe._id)}
+                            aria-label={isFavorite(currentRecipe._id) ? 'Remove from favorites' : 'Add to favorites'}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 0,
+                                backgroundColor: 'rgba(255, 255, 255)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '28px',
+                                color: isFavorite(currentRecipe._id) ? '#f5c518' : '#ccc',
+                                transition: 'color 0.3s ease',
+                                height: '50px',
+                                padding: '0 15px 3px',
+                                borderTopLeftRadius: '0px',
+                                borderBottomLeftRadius: '20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                userSelect: 'none',
+                            }}
+                        >
+                            <FontAwesomeIcon
+                                icon={isFavorite(currentRecipe._id) ? faStarSolid : faStarRegular}
+                                style={{color: isFavorite(currentRecipe._id) ? '#f39c12' : '#bbb', fontSize: 36}}
+                            />
+                        </button>
                     </div>
                 )}
 
@@ -393,7 +467,6 @@ function RecipeShow() {
         </>
 
     );
-
 }
 
 export default RecipeShow;
