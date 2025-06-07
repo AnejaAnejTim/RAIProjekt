@@ -16,6 +16,20 @@ var recipeSchema = new Schema({
         user: {type: Schema.Types.ObjectId, ref: 'user'},
         date: {type: Date}
     }],
+    'images': [{
+        filename: String,
+        originalName: String,
+        path: String,
+        mimetype: String,
+        size: Number,
+        uploadDate: {type: Date, default: Date.now}
+    }],
+    'mainImage': {
+        type: String,
+        default: null
+    }
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('recipe', recipeSchema);

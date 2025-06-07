@@ -5,18 +5,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c4d3f63-5956-4aeb-adaf-7c5b14c47ba4" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/models/commentModel.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749284897678-739457571.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285150594-398964371.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285311213-725634980.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285511556-299140639.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749285583123-91897621.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749288540816-688795080.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749289185075-228438093.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749290274418-721549139.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749295656935-482066769.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749295839626-132362414.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/recipes/images-1749298082173-460338231.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/CommentCard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/controllers/recipeController.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/recipeController.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/controllers/userController.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/userController.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/models/recipeModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/recipeModel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/routes/recipeRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/recipeRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/RecipeEditForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RecipeEditForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/RecipeHistory.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RecipeHistory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/RecipeShow.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/RecipeShow.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Recipes.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Recipes.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/TrendingRecipesShow.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/TrendingRecipesShow.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -34,20 +59,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\Anej.DESKTOP-8S6VLGL\\AppData\\Roaming\\JetBrains\\WebStorm2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;trending-recipes&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2025.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\Anej.DESKTOP-8S6VLGL\\AppData\\Roaming\\JetBrains\\WebStorm2025.1\\plugins\\Shell Script\\shellcheck.exe",
+    "git-widget-placeholder": "trending-recipes",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Users\\Cverle\\AppData\\Local\\Programs\\WebStorm\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

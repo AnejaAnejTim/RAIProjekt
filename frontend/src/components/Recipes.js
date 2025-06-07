@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faUtensils, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faUtensils, faSearch,faEye } from '@fortawesome/free-solid-svg-icons';
 
 function Recipes() {
   const [recipes, setRecipes] = useState([]);
@@ -124,23 +124,19 @@ function Recipes() {
                   }}
                 >
                   <img
-                    src={placeholderImage}
-                    alt={recipe.title}
-                    style={{
-                      width: '100%',
-                      height: '160px',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                      marginBottom: '15px',
-                    }}
-                  />
-                  <FontAwesomeIcon
-                    icon={faUtensils}
-                    style={{
-                      fontSize: '30px',
-                      marginBottom: '10px',
-                      color: '#84c318',
-                    }}
+                      src={
+                          recipe.mainImage
+                              ? `http://localhost:3001/recipes/images/${recipe.mainImage}`
+                              : placeholderImage
+                      }
+                      alt={recipe.title}
+                      style={{
+                          width: '100%',
+                          height: '160px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                          marginBottom: '15px',
+                      }}
                   />
                   <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
                     {recipe.title}
@@ -155,9 +151,9 @@ function Recipes() {
                   >
                     {shortDesc}
                   </p>
-                  <div style={{ fontSize: '1rem', color: '#f39c12' }}>
-                    <FontAwesomeIcon icon={faStar} /> {fakeRating.toFixed(2)} / 5
-                  </div>
+                    <div style={{ fontSize: '1rem', color: '#888' }}>
+                        <FontAwesomeIcon icon={faEye} /> {recipe.views ?? 0}
+                    </div>
                 </div>
               </Link>
             );
