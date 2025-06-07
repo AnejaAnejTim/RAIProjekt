@@ -25,6 +25,7 @@ function Recipes() {
     const isFavorite = (id) => favorites.includes(id);
 
 
+
     const toggleFavorite = (id) => {
         const method = isFavorite(id) ? 'DELETE' : 'POST';
         fetch(`http://localhost:3001/api/users/favorites/${id}`, {

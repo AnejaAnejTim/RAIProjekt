@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const LoginRequest = require('../models/loginConfirmationModel');
+const PushNotificationModel = require('../models/pushNotificationModel'); 
 
 const pendingLogins = new Map();
 
@@ -59,7 +60,7 @@ exports.initiateLogin = async (req, res) => {
             success: true,
             message: 'Login confirmation sent to your mobile device',
             confirmationToken,
-            expiresIn: 300 // 5 minutes in seconds
+            expiresIn: 300
         });
 
     } catch (error) {
@@ -248,24 +249,46 @@ exports.getPendingLogins = async (req, res) => {
     }
 };
 
-async function sendPushNotification(userId, notification) {
-    try {
-        const userTokens = await getUserPushTokens(userId);
-
-        if (userTokens.length > 0) {
-            console.log(`Sending push notification to user ${userId}:`, notification);
-        }
-    } catch (error) {
-        console.error('Push notification error:', error);
-    }
+async function getUserPushTokens(userId) {
+  const records = await PushNotificationModel.find({ user: userId });
+  return records.map(record => record.token);
 }
 
-async function getUserPushTokens(userId) {
-    try {
-        const user = await User.findById(userId);
-        return user.pushTokens || [];
-    } catch (error) {
-        console.error('Get push tokens error:', error);
-        return [];
+async function sendPushNotification(userId, notification) {
+  try {
+    const userTokens = await getUserPushTokens(userId);
+
+    if (!userTokens || userTokens.length === 0) {
+      console.warn(`No push tokens found for user ${userId}`);
+      return false;
     }
+
+    const messages = userTokens.map(token => ({
+      to: token,
+      sound: 'default',
+      title: notification.title,
+      body: notification.body,
+      data: notification.data || {},
+    }));
+
+    console.log(`Sending push notification to user ${userId}:`, messages);
+
+    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-Encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(messages),
+    });
+
+    const result = await response.json();
+    console.log('Expo push response:', result);
+
+    return result?.data?.every(item => item.status === 'ok');
+  } catch (error) {
+    console.error('Push notification error:', error);
+    return false;
+  }
 };
