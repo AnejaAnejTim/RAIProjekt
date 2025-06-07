@@ -22,6 +22,8 @@ var recipeRouter = require('./routes/recipeRoutes');
 var barcodeRouter = require('./routes/barcodeRoutes');
 var loginConfirmationRoutes = require('./routes/loginConfirmationRoutes');
 var mqttRoutes = require('./routes/mqttRoutes');
+const recipeRoutes = require('./routes/recipeRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 
 
@@ -77,7 +79,8 @@ app.use('/recipes', recipeRouter);
 app.use('/barcodes', barcodeRouter);
 app.use('/login-confirmation', loginConfirmationRoutes);
 app.use('/api', mqttRoutes);
-
+app.use('/api/recipes', recipeRoutes)
+app.use('/api/users', userRoutes);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

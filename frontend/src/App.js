@@ -14,6 +14,7 @@ import AddArticles from './components/AddArticles';
 import Recipe from './components/RecipeShow';
 import Recipes from './components/Recipes';
 import RecipeHistory from "./components/RecipeHistory";
+import FavoriteRecipes from './components/FavoriteRecipes';
 
 function App() {
 
@@ -85,6 +86,9 @@ function App() {
               <Route path="/recipe/:id" element={
                   <Recipe />
               } />
+              <Route path="/favorites" element={
+                <FavoriteRecipes />
+                } />
               <Route path="/recipehistory" element={
                        <PrivateRoute>
                          <RecipeHistory />

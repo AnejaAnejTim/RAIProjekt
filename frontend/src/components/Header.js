@@ -43,6 +43,7 @@ const Header = () => {
             {user ? (
               <>
                 <li className="nav-item"><Link to="/myfridge" className="nav-link text-white">Moj hladilnik</Link></li>
+                <li className="nav-item"><Link to="/favorites" className="nav-link text-white">Moji recepti</Link></li>
                 <li className="nav-item"><Link to="/generate" className="nav-link text-white">Generiraj</Link></li>
                 <li className="nav-item"><Link to="/recipes" className="nav-link text-white">Recepti</Link></li>
                 <li className="nav-item"><Link to="/profile" className="nav-link text-white">Profile</Link></li>
