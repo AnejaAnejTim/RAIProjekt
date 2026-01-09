@@ -30,7 +30,7 @@ const userRoutes = require('./routes/userRoutes');
 var app = express();
 const cors = require('cors');
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://100.117.101.70:3000',
     credentials: true
 }));
 // view engine setup
@@ -52,15 +52,17 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo');
 app.use(session({
   secret: 'work hard',
-  resave: true,
+  resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({mongoUrl: mongoDB}),
+  store: MongoStore.create({ mongoUrl: mongoDB }),
   cookie: {
-    sameSite: 'lax', // or 'none' if using HTTPS across origins
-    secure: false,   // true if you're using HTTPS
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
+
 //Shranimo sejne spremenljivke v locals
 //Tako lahko do njih dostopamo v vseh view-ih (glej layout.hbs)
 app.use(function (req, res, next) {

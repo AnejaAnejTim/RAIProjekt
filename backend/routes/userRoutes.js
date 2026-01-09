@@ -38,6 +38,32 @@ router.post('/login', userController.login);
 router.post('/appLogin', userController.appLogin);
 router.post('/logout', userController.appLogout);
 router.post('/savePushToken', userController.savePushToken);
+var UserModel = require('../models/userModel');
+router.post('/skip-login', async (req, res) => {
+  try {
+      const user = await UserModel.findOne({ username: 'leona' });
+
+    if (!user) {
+      return res.status(404).json({ message: 'No users exist' });
+    }
+
+    req.session.userId = user._id.toString();
+
+    req.session.save(err => {
+      if (err) {
+        return res.status(500).json({ message: 'Session error' });
+      }
+
+      res.json({
+        success: true,
+        user
+      });
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Skip login failed' });
+  }
+});
+
 
 router.put('/:id', userController.update);
 

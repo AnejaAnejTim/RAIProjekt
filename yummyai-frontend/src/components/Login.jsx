@@ -46,7 +46,7 @@ function Login() {
         setError('');
 
         try {
-            const loginRes = await fetch("http://localhost:3001/users/login", {
+            const loginRes = await fetch("/users/login", {
                 method: "POST",
                 credentials: "include",
                 headers: {'Content-Type': 'application/json'},
@@ -59,7 +59,7 @@ function Login() {
             const loginData = await loginRes.json();
 
             if (loginData._id !== undefined) {
-                const confirmRes = await fetch('http://localhost:3001/users/login-confirmation/initiate', {
+                const confirmRes = await fetch('/users/login-confirmation/initiate', {
                     method: 'POST',
                     credentials: "include",
                     headers: {
@@ -100,7 +100,7 @@ function Login() {
     const startStatusPolling = (token) => {
         const pollInterval = setInterval(async () => {
             try {
-                const response = await fetch(`http://localhost:3001/login-confirmation/status/${token}`, {
+                const response = await fetch(`/login-confirmation/status/${token}`, {
                     credentials: "include"
                 });
                 const data = await response.json();
@@ -131,7 +131,7 @@ function Login() {
 
     const completeSecureLogin = async (token) => {
         try {
-            const response = await fetch('http://localhost:3001/users/login-confirmation/complete', {
+            const response = await fetch('/users/login-confirmation/complete', {
                 method: 'POST',
                 credentials: "include",
                 headers: {
@@ -258,37 +258,37 @@ function Login() {
                                                     {loading ? 'Sending...' : 'Secure Login'}
                                                 </button>
                                             </div>
+                                            <div className="text-center mt-3">
+                                <button
+                                    className="btn btn-outline-secondary w-100"
+                                    onClick={async () => {
+                                    setLoading(true);
+                                    setError('');
+
+                                    try {
+                                        const res = await fetch('/users/skip-login', {
+                                        method: 'POST',
+                                        credentials: 'include'
+                                        });
+
+                                        if (!res.ok) throw new Error();
+
+                                        const data = await res.json();
+                                        userContext.setUserContext(data.user);
+                                    } catch {
+                                        setError('Skip login failed');
+                                    } finally {
+                                        setLoading(false);
+                                    }
+                                    }}
+                                >
+                                    Skip login (dev)
+                                </button>
+                                </div>
+
                                         </form>
                                     </>
                                 )}
-                                <div className="text-center mt-3">
-  <button
-    className="btn btn-outline-secondary w-100"
-    onClick={async () => {
-      setLoading(true);
-      setError('');
-
-      try {
-        const res = await fetch('/users/skip-login', {
-          method: 'POST',
-          credentials: 'include'
-        });
-
-        if (!res.ok) throw new Error();
-
-        const data = await res.json();
-        userContext.setUserContext(data.user);
-      } catch {
-        setError('Skip login failed');
-      } finally {
-        setLoading(false);
-      }
-    }}
-  >
-    Skip login (dev)
-  </button>
-</div>
-
 
                                 {/* Waiting for Mobile Confirmation */}
                                 {step === 'waiting' && (
